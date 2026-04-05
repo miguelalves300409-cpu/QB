@@ -1,10 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
 
-    /* 1. Animação de Entrada (Intro / Hero Reveal) */
+    /* 1. AnimaÃ§Ã£o de Entrada (Intro / Hero Reveal) */
     const tlIntro = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-    // Logo e Mídia Central (Óculos) - Revelação Dramática
+    // Logo e MÃ­dia Central (Ã“culos) - RevelaÃ§Ã£o DramÃ¡tica
     tlIntro.to([".logo-entrance", "#video-container"], {
         y: 0,
         opacity: 1,
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ease: "power2.out"
     });
 
-    // Letterings (Títulos Grandes) - Agora entram quase simultâneos para impacto
+    // Letterings (TÃ­tulos Grandes) - Agora entram quase simultÃ¢neos para impacto
     tlIntro.to(".text-reveal-content", {
         y: "0%",
         opacity: 1,
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ease: "power4.out"
     }, "-=1.0");
 
-    // Botões (CTAs) - Agora entram com impacto imediato junto com os títulos
+    // BotÃµes (CTAs) - Agora entram com impacto imediato junto com os tÃ­tulos
     tlIntro.to(".ctas", {
         y: 0,
         opacity: 1,
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    /* 4. Animações da Galeria de Produtos */
+    /* 4. AnimaÃ§Ãµes da Galeria de Produtos */
     const productCards = gsap.utils.toArray('.product-card');
     productCards.forEach((card, i) => {
         const titleItems = card.querySelectorAll('.product-title-reveal');
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         const itemsList = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
-        const message = encodeURIComponent(`Olá QB! Gostaria de um concierge para finalizar meu pedido: ${itemsList}.`);
+        const message = encodeURIComponent(`OlÃ¡ QB! Gostaria de um concierge para finalizar meu pedido: ${itemsList}.`);
         waLink.href = `https://wa.me/message/FV37UMP6GFRWL1?text=${message}`;
     }
 
@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const checkoutTrigger = document.querySelector("#final-checkout-btn");
     if(checkoutTrigger) {
         checkoutTrigger.onclick = () => {
-            if(cart.length === 0) return alert("Seu carrinho está vazio!");
+            if(cart.length === 0) return alert("Seu carrinho estÃ¡ vazio!");
             window.location.href = 'checkout.html';
         };
     }
@@ -313,9 +313,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeProduct) closeProduct.onclick = () => toggleProductDrawer(false);
     if (productOverlay) productOverlay.onclick = () => toggleProductDrawer(false);
 
-    // Mapear clique nos cards (nas imagens/área do card)
+    // Mapear clique nos cards (nas imagens/Ã¡rea do card)
     productCards.forEach(card => {
-        const clickableArea = card.querySelector('.relative.overflow-hidden'); // Área da imagem
+        const clickableArea = card.querySelector('.relative.overflow-hidden'); // Ãrea da imagem
         const titleArea = card.querySelector('.product-title-reveal');
         
         const openAction = () => {
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 name: btn.getAttribute("data-name"),
                 price: btn.getAttribute("data-price"),
                 img: btn.getAttribute("data-img"),
-                model: card.querySelector('.font-mono.text-stone-400')?.innerText || "MODELO EXCLUSIVO"
+                model: card.querySelector('.font-mono.text-stone-400')?.innerText || "PRODUTO EXCLUSIVO"
             };
 
             // Popular Drawer
@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('drawer-p-price').innerText = `R$ ${parseInt(data.price).toLocaleString('pt-BR')},00`;
             document.getElementById('drawer-p-model').innerText = data.model;
 
-            // Configurar botão de compra do drawer
+            // Configurar botÃ£o de compra do drawer
             drawerAddBtn.onclick = () => {
                 addToCart({ id: data.id, name: data.name, price: parseInt(data.price), img: data.img });
                 toggleProductDrawer(false);
@@ -377,10 +377,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const drawerName = document.getElementById('user-display-name');
 
             if (user) {
-                // Usuário Logado
+                // UsuÃ¡rio Logado
                 const name = user.displayName || user.email.split('@')[0];
                 if(headerLabel) {
-                    headerLabel.innerText = `Olá, ${name}`;
+                    headerLabel.innerText = `OlÃ¡, ${name}`;
                     headerLabel.classList.remove('opacity-0', 'translate-x-1');
                     headerLabel.style.opacity = "1"; headerLabel.style.transform = "translateX(0)";
                 }
@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(viewLogin) viewLogin.style.display = 'none';
                 if(viewMember) viewMember.classList.add('active');
             } else {
-                // Usuário Deslogado
+                // UsuÃ¡rio Deslogado
                 if(headerLabel) {
                     headerLabel.innerText = "Log In";
                     headerLabel.style.opacity = "0.5";
@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // Cadastro de Usuário
+    // Cadastro de UsuÃ¡rio
     const registerBtn = document.querySelector('#view-register button');
     if (registerBtn && auth) {
         registerBtn.onclick = async () => {
@@ -451,12 +451,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const productCatalog = [
         { name: "IBIZA", id: "1", img: "assets/img/tech_glasses.png" },
         { name: "MALDIVES", id: "2", img: "assets/img/white_glasses.png" },
-        { name: "ST. TROPEZ", id: "3", img: "assets/img/modelo%2003.png" },
-        { name: "MYKONOS", id: "4", img: "assets/img/modelo%2004.png" },
-        { name: "BORA BORA", id: "5", img: "assets/img/modelo%2005.png" },
-        { name: "CAPRI", id: "6", img: "assets/img/modelo%2006.png" },
-        { name: "NAVARIO", id: "7", img: "assets/img/modelo%2007.png" },
-        { name: "VIK", id: "8", img: "assets/img/modelo%2008.png" }
+        { name: "ST. TROPEZ", id: "3", img: "assets/img/PRODUTO%2003.png" },
+        { name: "MYKONOS", id: "4", img: "assets/img/PRODUTO%2004.png" },
+        { name: "BORA BORA", id: "5", img: "assets/img/PRODUTO%2005.png" },
+        { name: "CAPRI", id: "6", img: "assets/img/PRODUTO%2006.png" },
+        { name: "NAVARIO", id: "7", img: "assets/img/PRODUTO%2007.png" },
+        { name: "VIK", id: "8", img: "assets/img/PRODUTO%2008.png" }
     ];
 
     if (searchBtn) searchBtn.onclick = () => { searchOverlay.classList.add('active'); setTimeout(() => searchInput.focus(), 500); };
@@ -496,12 +496,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoHeader = document.querySelector('header a[href="index.html"]');
     if (logoHeader) logoHeader.onclick = (e) => { e.preventDefault(); gsap.to(window, { duration: 1.5, scrollTo: 0, ease: "power4.inOut" }); };
 
-    /* --- GESTÃO DINÂMICA DE INVENTÁRIO (ADMIN) --- */
+    /* --- GESTÃƒO DINÃ‚MICA DE INVENTÃRIO (ADMIN) --- */
     const { doc, getDoc, updateDoc, setDoc, onSnapshot } = window.qbDBMethods || {};
     const db = window.qbDB;
 
     if (db) {
-        // Observador Geral do Catálogo (Firestore -> Site)
+        // Observador Geral do CatÃ¡logo (Firestore -> Site)
         onSnapshot(doc(db, "settings", "catalog"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -521,9 +521,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             if(price) addToCartBtn.setAttribute('data-price', price);
                             if(name) addToCartBtn.setAttribute('data-name', name);
                             
-                            // 2. Atualiza o Preço Visual na Tela (Texto)
+                            // 2. Atualiza o PreÃ§o Visual na Tela (Texto)
                             const priceElem = card.querySelector('.text-stone-400.font-medium, .text-stone-900.font-bold');
-                            // Procura o elemento que contém o "R$"
+                            // Procura o elemento que contÃ©m o "R$"
                             const allTexts = card.querySelectorAll('p, span');
                             allTexts.forEach(txt => {
                                 if(txt.innerText.includes('R$') && price) {
@@ -551,7 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Função para você usar no console ou em um painel futuro: 
+    // FunÃ§Ã£o para vocÃª usar no console ou em um painel futuro: 
     // updateProductPrice('1', 1500)
     window.updateProductPrice = async (id, newPrice) => {
         if (!db) return;
@@ -560,14 +560,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const snapshot = await getDoc(catalogRef);
             
             if(!snapshot.exists()) {
-                // Se for a primeira vez, cria a base do catálogo
+                // Se for a primeira vez, cria a base do catÃ¡logo
                 await setDoc(catalogRef, { [id]: { price: newPrice, name: "Produto Novo" } });
             } else {
                 await updateDoc(catalogRef, { [`${id}.price`]: newPrice });
             }
-            console.log(`Preço de ID ${id} atualizado para R$ ${newPrice}`);
+            console.log(`PreÃ§o de ID ${id} atualizado para R$ ${newPrice}`);
         } catch (error) {
-            console.error("Erro ao atualizar catálogo:", error);
+            console.error("Erro ao atualizar catÃ¡logo:", error);
         }
     };
 });
