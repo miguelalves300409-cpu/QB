@@ -1,0 +1,165 @@
+:root {
+    /* Variáveis baseadas no design_system.js */
+    --bg-color: #FFFFFF;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --white: #FFFFFF;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hero-section {
+    height: 275vh;
+    position: relative;
+}
+
+/* Sticky element keeps the hero content in place while we scroll the section */
+.hero-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Typography & Layout styles baseadas no design_system */
+.text-outline {
+    -webkit-text-stroke: 1.5px var(--text-primary);
+    color: transparent;
+}
+
+/* Mask Reveal Animation */
+.text-reveal-wrapper {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+.text-reveal-content {
+    transform: translateY(110%);
+    opacity: 0;
+    display: inline-block;
+    will-change: transform, opacity;
+}
+
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    will-change: transform, opacity;
+}
+
+/* Video element - Tela inteira e central */
+.video-container {
+    position: absolute;
+    inset: 0;
+    /* Cobre toda a primeira dobra */
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+    /* Fica atrás do texto (z-index: 20) */
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    mix-blend-mode: multiply;
+    /* Fundo branco fica transparente */
+    /* Filtros aprimorados para simular maior nitidez e qualidade ("pop" óptico) */
+    filter: contrast(1.12) saturate(1.15) brightness(0.98);
+}
+
+.hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Zoom levíssimo de 1.15x apenas para encaixe perfeito */
+    transform: scale(1.15);
+    transform-origin: center center;
+}
+
+/* Buttons design */
+.btn-primary {
+    background-color: var(--text-primary);
+    color: var(--white);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover {
+    background-color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--text-primary);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary:hover {
+    background-color: var(--text-primary);
+    color: var(--white);
+    transform: translateY(-2px);
+    border-color: transparent;
+}
+
+.icon-arrow {
+    transition: transform 0.3s ease;
+}
+
+.btn-secondary:hover .icon-arrow {
+    transform: translateY(3px);
+    /* Seta aponta um pouco mais no hover */
+}
+
+/* Ambient glow for sophistication */
+.ambient-glow {
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, transparent 60%);
+    filter: blur(60px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    mix-blend-mode: overlay;
+}
+
+/* --- ESTILOS DOBRA 2 --- */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.btn-beam { position: relative; overflow: hidden; z-index: 10; border-radius: 9999px; padding: 1px; }
+.btn-beam::before {
+    content: ""; position: absolute; inset: -50%; z-index: -1;
+    background: conic-gradient(from 90deg at 50% 50%, transparent 0%, #a8a29e 50%, transparent 100%);
+    animation: spin 3s linear infinite; opacity: 0; transition: opacity 0.3s;
+}
+.btn-beam:hover::before { opacity: 1; }
+.btn-beam-content {
+    background-color: #1c1917; color: white; position: relative; z-index: 10;
+    width: 100%; height: 100%; border-radius: inherit; display: flex; align-items: center; justify-content: center;
+}
+
+/* GRID BACKGROUND */
+.bg-grid {
+    background-size: 40px 40px;
+    background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
