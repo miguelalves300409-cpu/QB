@@ -120,8 +120,8 @@
                             <input type="email" id="chk-email" placeholder="nome@exemplo.com" class="w-full input-elegant p-4 rounded-2xl outline-none font-medium text-xs">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">CPF do Comprador</label>
-                            <input type="text" id="chk-cpf" placeholder="000.000.000-00" class="w-full input-elegant p-4 rounded-2xl outline-none cpf-mask text-xs">
+                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">CPF ou CNPJ</label>
+                            <input type="text" id="chk-cpf" placeholder="CPF ou CNPJ da empresa" class="w-full input-elegant p-4 rounded-2xl outline-none doc-mask text-xs">
                         </div>
                     </div>
 
@@ -205,7 +205,7 @@
             document.getElementById('total-val').innerText = `R$ ${total.toLocaleString('pt-BR')},00`;
 
             // Inicializar Cleave.js (Máscaras Realistas) para as etapas iniciais
-            new Cleave('.cpf-mask', { blocks: [3, 3, 3, 2], delimiters: ['.', '.', '-'], numericOnly: true });
+            new Cleave('.doc-mask', { blocks: [14], numericOnly: true }); // Simplificado para aceitar ambos
             new Cleave('.cep-mask', { delimiter: '-', blocks: [5, 3], numericOnly: true });
 
             // Inicializar o Brick de Pagamento
@@ -237,7 +237,8 @@
                     onSubmit: (formData) => {
                         return new Promise((resolve, reject) => {
                             const email = document.getElementById('chk-email').value;
-                            const cpf = document.getElementById('chk-cpf').value.replace(/\D/g, "");
+                            const doc = document.getElementById('chk-cpf').value.replace(/\D/g, "");
+                            const docType = doc.length > 11 ? "CNPJ" : "CPF";
                             
                             fetch("/api/process-payment", {
                                 method: "POST",
@@ -246,7 +247,7 @@
                                     ...formData,
                                     payer: { 
                                         email, 
-                                        identification: { type: "CPF", number: cpf }
+                                        identification: { type: docType, number: doc }
                                     }
                                 }),
                             })
