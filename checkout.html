@@ -120,8 +120,8 @@
                             <input type="email" id="chk-email" placeholder="nome@exemplo.com" class="w-full input-elegant p-4 rounded-2xl outline-none font-medium text-xs">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">WhatsApp</label>
-                            <input type="text" id="chk-phone" placeholder="(00) 00000-0000" class="w-full input-elegant p-4 rounded-2xl outline-none phone-mask text-xs">
+                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">CPF do Comprador</label>
+                            <input type="text" id="chk-cpf" placeholder="000.000.000-00" class="w-full input-elegant p-4 rounded-2xl outline-none cpf-mask text-xs">
                         </div>
                     </div>
 
@@ -217,7 +217,7 @@
             document.getElementById('total-val').innerText = `R$ ${total.toLocaleString('pt-BR')},00`;
 
             // Inicializar Cleave.js (Máscaras Realistas)
-            new Cleave('.phone-mask', { phone: true, phoneRegionCode: 'BR' });
+            new Cleave('.cpf-mask', { blocks: [3, 3, 3, 2], delimiters: ['.', '.', '-'], numericOnly: true });
             new Cleave('.cep-mask', { delimiter: '-', blocks: [5, 3], numericOnly: true });
             new Cleave('.card-mask', { creditCard: true, onCreditCardTypeChanged: (type) => {
                 const icon = document.getElementById('card-brand');
