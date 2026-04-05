@@ -217,6 +217,11 @@
     <main class="hero-section" id="hero">
         <div class="hero-sticky">
 
+            <!-- Logo Superior Esquerda -->
+            <nav class="absolute top-8 left-8 md:top-12 md:left-12 z-50 logo-entrance opacity-0">
+                <img src="assets/logo.png" alt="Logo QB" class="h-12 md:h-16 w-auto object-contain mix-blend-multiply opacity-90 transition-all duration-500 hover:opacity-100 cursor-pointer">
+            </nav>
+
             <div class="ambient-glow"></div>
 
             <!-- Centro/Direita: Mídia Principal -->
@@ -347,7 +352,7 @@
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 font-mono text-[8px] text-stone-400/60 tracking-[0.3em] uppercase">AURA - T-N SYSTEM</div>
                     <div class="absolute inset-0 w-full h-full fold2-img-parallax flex items-center justify-center p-12 lg:p-14">
                         <img src="assets/tech_glasses_v3.png" alt="Óculos Aura Tech" 
-                            class="relative w-full h-full object-contain filter grayscale brightness-[0.7] mix-blend-multiply group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 ease-out group-hover:scale-[1.1]"
+                            class="relative w-full h-full object-contain filter grayscale brightness-[0.8] contrast-[1.1] mix-blend-multiply group-hover:grayscale-0 group-hover:brightness-[1.15] group-hover:contrast-[1.25] transition-all duration-1000 ease-out group-hover:scale-[1.1]"
                             style="-webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 95%); mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 95%);">
                     </div>
                 </div>
@@ -389,7 +394,7 @@
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 font-mono text-[8px] text-stone-400/60 tracking-[0.3em] uppercase">AURA - WHT - SYNC</div>
                     <div class="absolute inset-0 w-full h-full fold3-img-parallax flex items-center justify-center p-12 lg:p-14">
                         <img src="assets/dobra3_white_final_v5.png" alt="Óculos Branco Premium" 
-                            class="relative w-full h-full object-contain object-center filter grayscale brightness-[0.7] mix-blend-multiply opacity-90 group-hover:grayscale-0 group-hover:brightness-100 group-hover:opacity-100 transition-all duration-1000 ease-out group-hover:scale-[1.1]"
+                            class="relative w-full h-full object-contain object-center filter grayscale brightness-[0.8] contrast-[1.1] mix-blend-multiply opacity-90 group-hover:grayscale-0 group-hover:brightness-[1.15] group-hover:contrast-[1.25] group-hover:opacity-100 transition-all duration-1000 ease-out group-hover:scale-[1.1]"
                             style="-webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 30%, transparent 95%); mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 30%, transparent 95%);">
                     </div>
                 </div>
@@ -424,9 +429,9 @@
                 stagger: 0.15
             }, "-=1.0");
 
-            // Mídia Central (Vídeo) e as setinhas verticais
-            tlIntro.to(["#video-container", ".vertical-nav"], {
-                y: 0, // Video já ocupa toda a altura com inset: 0
+            // Mídia Central (Vídeo), as setinhas verticais e a Logo
+            tlIntro.to(["#video-container", ".vertical-nav", ".logo-entrance"], {
+                y: 0,
                 opacity: 1,
                 duration: 1.5,
                 ease: "power2.out"
@@ -506,7 +511,7 @@
             });
 
             /* 3. Parallax e Desfoque nas Letrings ao fazer a rolagem (Scroll Down) */
-            gsap.to([".eyebrow-text", ".hero-headline", ".sub-headline", ".ctas", ".vertical-nav"], {
+            gsap.to([".eyebrow-text", ".hero-headline", ".sub-headline", ".ctas", ".vertical-nav", ".logo-entrance"], {
                 y: -120, // Move 120px para cima acompanhando a rolagem
                 opacity: 0,
                 filter: "blur(12px)", // Efeito cinematic de Apple
