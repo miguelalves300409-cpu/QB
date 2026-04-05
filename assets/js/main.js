@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
             context.imageSmoothingQuality = 'high';
             context.clearRect(0, 0, w, h);
 
-            // 2. Lógica de "Cover" para desenhar a imagem centralizada e preenchendo o canvas
+            // 2. Lógica Inteligente de Enquadramento (Ajuste para Mobile)
             const imgW = activeImage.naturalWidth;
             const imgH = activeImage.naturalHeight;
             const imgRatio = imgW / imgH;
@@ -120,16 +120,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let drawW, drawH, drawX, drawY;
 
-            if (canvasRatio > imgRatio) {
-                drawW = w;
-                drawH = w / imgRatio;
-                drawX = 0;
+            // Se for mobile (Vertical), priorizamos o "CONTAIN" para ver os óculos inteiros
+            // Se for desktop (Horizontal), mantemos o "COVER" para impacto imersivo
+            const isMobile = w < 768;
+
+            if (isMobile) {
+                // Lógica de "CONTAIN" - Ver óculos completo na largura do celular
+                drawW = w * 0.9; // 90% da largura para não encostar nas bordas
+                drawH = drawW / imgRatio;
+                drawX = (w - drawW) / 2;
                 drawY = (h - drawH) / 2;
             } else {
-                drawH = h;
-                drawW = h * imgRatio;
-                drawX = (w - drawW) / 2;
-                drawY = 0;
+                // Lógica de "COVER" para Desktop
+                if (canvasRatio > imgRatio) {
+                    drawW = w;
+                    drawH = w / imgRatio;
+                    drawX = 0;
+                    drawY = (h - drawH) / 2;
+                } else {
+                    drawH = h;
+                    drawW = h * imgRatio;
+                    drawX = (w - drawW) / 2;
+                    drawY = 0;
+                }
             }
 
             context.drawImage(activeImage, drawX, drawY, drawW, drawH);
