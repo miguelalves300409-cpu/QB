@@ -96,9 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (activeImage && activeImage.complete && activeImage.naturalWidth > 0) {
             const dpr = window.devicePixelRatio || 1;
-            const w = window.innerWidth;
-            const h = window.innerHeight;
             
+            // Usamos dimensões estáveis baseadas no canvas ou no container para evitar pulos da barra mobile
+            const w = window.innerWidth;
+            const h = window.innerHeight; // Para redimensionar se necessário
+
             if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
                 canvas.width = w * dpr;
                 canvas.height = h * dpr;
@@ -106,27 +108,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.style.height = h + 'px';
             }
 
+            // Usamos as dimensões lógicas do canvas para o desenho (independente de salto de viewport)
+            const stageW = canvas.width / dpr;
+            const stageH = canvas.height / dpr;
+
             context.setTransform(dpr, 0, 0, dpr, 0, 0);
             context.imageSmoothingEnabled = true;
             context.imageSmoothingQuality = 'high';
-            context.clearRect(0, 0, w, h);
+            context.clearRect(0, 0, stageW, stageH);
 
             const imgW = activeImage.naturalWidth;
             const imgH = activeImage.naturalHeight;
             const imgRatio = imgW / imgH;
-            
             const isMobile = w < 768;
 
             if (isMobile) {
-                // ROTAÇÃO PARA FORMATO VERTICAL "TELA CHEIA" (Full Cover)
                 context.save();
-                context.translate(w / 2, h / 2);
-                context.rotate(Math.PI / 2); // 90 graus
+                context.translate(stageW / 2, stageH / 2);
+                context.rotate(Math.PI / 2);
                 
-                // Lógica de "COVER" para imagem rotacionada:
-                // IMG_W passa a ser comparada com CANVAS_H e IMG_H com CANVAS_W
-                const scaleW = h / imgW;
-                const scaleH = w / imgH;
+                // Scale cover para o palco estável
+                const scaleW = stageH / imgW;
+                const scaleH = stageW / imgH;
                 const scale = Math.max(scaleW, scaleH);
                 
                 const drawW = imgW * scale;
@@ -135,19 +138,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 context.drawImage(activeImage, -drawW / 2, -drawH / 2, drawW, drawH);
                 context.restore();
             } else {
-                // Lógica de "COVER" para Desktop (Horizontal)
-                const canvasRatio = w / h;
+                const canvasRatio = stageW / stageH;
                 let drawW, drawH, drawX, drawY;
 
                 if (canvasRatio > imgRatio) {
-                    drawW = w;
-                    drawH = w / imgRatio;
+                    drawW = stageW;
+                    drawH = stageW / imgRatio;
                     drawX = 0;
-                    drawY = (h - drawH) / 2;
+                    drawY = (stageH - drawH) / 2;
                 } else {
-                    drawH = h;
-                    drawW = h * imgRatio;
-                    drawX = (w - drawW) / 2;
+                    drawH = stageH;
+                    drawW = stageH * imgRatio;
+                    drawX = (stageW - drawW) / 2;
                     drawY = 0;
                 }
                 context.drawImage(activeImage, drawX, drawY, drawW, drawH);
