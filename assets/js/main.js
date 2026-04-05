@@ -65,14 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let loadedCount = 0;
-    images.forEach(img => {
-        if (img.complete) loadedCount++;
-        else img.onload = () => {
+    images.forEach((img, i) => {
+        img.onload = () => {
             loadedCount++;
-            if (loadedCount === 1) render();
+            if (i === 0) render(); // Forçar render assim que a primeira carregar
+            if (loadedCount === frameCount) render(); // Render final quando todas estiverem prontas
         };
     });
-    if (images[0] && images[0].complete) render();
 
     let lastLoadedFrameIndex = 0;
     function render() {
@@ -81,23 +80,40 @@ document.addEventListener("DOMContentLoaded", () => {
         if (frameIndex >= frameCount) frameIndex = frameCount - 1;
 
         let activeImage = images[frameIndex];
-        if (!activeImage || !activeImage.complete) {
+        
+        // Fallback para a última imagem que realmente carregou
+        if (!activeImage || !activeImage.complete || activeImage.naturalWidth === 0) {
             activeImage = images[lastLoadedFrameIndex];
         } else {
             lastLoadedFrameIndex = frameIndex;
         }
 
-        if (activeImage && activeImage.complete) {
-            if (activeImage.width > 0 && canvas.width !== activeImage.width) {
-                canvas.width = activeImage.width;
-                canvas.height = activeImage.height;
+        if (activeImage && activeImage.complete && activeImage.naturalWidth > 0) {
+            // Ajuste dinâmico de redimensionamento do canvas para manter o aspect ratio
+            const imgRatio = activeImage.naturalWidth / activeImage.naturalHeight;
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+            const containerRatio = containerWidth / containerHeight;
+
+            if (containerRatio > imgRatio) {
+                canvas.width = containerWidth;
+                canvas.height = containerWidth / imgRatio;
+            } else {
+                canvas.height = containerHeight;
+                canvas.width = containerHeight * imgRatio;
             }
+
             context.imageSmoothingEnabled = true;
             context.imageSmoothingQuality = 'high';
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(activeImage, 0, 0, canvas.width, canvas.height);
         }
     }
+
+    // Tentar renderizar o frame 1 imediatamente se já estiver no cache
+    if (images[0].complete) render();
+    window.addEventListener('resize', render);
+
 
     gsap.to(glassesObj, {
         frame: frameCount,
