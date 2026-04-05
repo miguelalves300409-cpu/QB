@@ -1,0 +1,9 @@
+{
+  "name": "qb-oficial-premium",
+  "version": "1.0.0",
+  "description": "E-commerce de luxo QB Oficial",
+  "main": "index.html",
+  "dependencies": {
+    "mercadopago": "^2.0.15"
+  }
+}

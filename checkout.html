@@ -10,6 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <!-- Cleave.js para Máscaras de Input Reais -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
+    
+    <!-- SDK Mercado Pago v2 (Frontend) -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
@@ -250,14 +253,39 @@
             }});
         }
 
-        function finishOrder(btn) {
-            btn.innerHTML = `<iconify-icon icon="line-md:loading-twotone-loop" class="text-2xl"></iconify-icon>`;
-            setTimeout(() => {
-                const orderNum = "#QB-" + Math.floor(Math.random() * 900000 + 100000);
-                document.getElementById('order-number').innerText = orderNum;
-                document.getElementById('success-overlay').style.display = "flex";
-                localStorage.removeItem('qb_cart'); // LIMPA O CARRINHO PARA VALER
-            }, 2500);
+        async function finishOrder(btn) {
+            const email = document.getElementById('chk-email').value;
+            const name = document.getElementById('card-name')?.value || "Cliente QB";
+            
+            if(!email) return alert("Por favor, informe seu e-mail.");
+
+            btn.disabled = true;
+            btn.innerHTML = `<iconify-icon icon="line-md:loading-twotone-loop" class="text-2xl mr-2"></iconify-icon> Processando...`;
+
+            try {
+                const response = await fetch('/api/create-preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: cart,
+                        payer: { email, name }
+                    })
+                });
+
+                const preference = await response.json();
+                
+                if (preference.init_point) {
+                    // Redireciona para o checkout seguro do Mercado Pago
+                    window.location.href = preference.init_point;
+                } else {
+                    throw new Error("Erro ao gerar pagamento.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Houve um erro ao processar seu pagamento. Tente novamente.");
+                btn.disabled = false;
+                btn.innerHTML = "Finalizar Pedido de Luxo";
+            }
         }
 
         function setPaymentType(type, e) {
