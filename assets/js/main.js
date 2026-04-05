@@ -118,14 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const isMobile = w < 768;
 
             if (isMobile) {
-                // ROTAÇÃO PARA FORMATO VERTICAL (9:16 / Reels Style)
+                // ROTAÇÃO PARA FORMATO VERTICAL "TELA CHEIA" (Full Cover)
                 context.save();
                 context.translate(w / 2, h / 2);
-                context.rotate(Math.PI / 2); // Rotaciona 90 graus
+                context.rotate(Math.PI / 2); // 90 graus
                 
-                // Desenha os óculos ocupando a altura do celular (que virou largura na rotação)
-                // Usamos um fator de escala para que os óculos "em pé" caibam na tela
-                const scale = (h * 0.8) / imgW; 
+                // Lógica de "COVER" para imagem rotacionada:
+                // IMG_W passa a ser comparada com CANVAS_H e IMG_H com CANVAS_W
+                const scaleW = h / imgW;
+                const scaleH = w / imgH;
+                const scale = Math.max(scaleW, scaleH);
+                
                 const drawW = imgW * scale;
                 const drawH = imgH * scale;
                 
