@@ -66,11 +66,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let loadedCount = 0;
     images.forEach((img, i) => {
-        img.onload = () => {
+        const triggerRender = () => {
             loadedCount++;
-            if (i === 0) render(); // Forçar render assim que a primeira carregar
-            if (loadedCount === frameCount) render(); // Render final quando todas estiverem prontas
+            if (i === 0) render();
+            if (loadedCount === frameCount) render();
         };
+
+        if (img.complete) {
+            triggerRender();
+        } else {
+            img.onload = triggerRender;
+        }
     });
 
     let lastLoadedFrameIndex = 0;
