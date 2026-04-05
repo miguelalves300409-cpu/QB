@@ -95,24 +95,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (activeImage && activeImage.complete && activeImage.naturalWidth > 0) {
-            // Ajuste dinâmico de redimensionamento do canvas para manter o aspect ratio
-            const imgRatio = activeImage.naturalWidth / activeImage.naturalHeight;
-            const containerWidth = window.innerWidth;
-            const containerHeight = window.innerHeight;
-            const containerRatio = containerWidth / containerHeight;
-
-            if (containerRatio > imgRatio) {
-                canvas.width = containerWidth;
-                canvas.height = containerWidth / imgRatio;
-            } else {
-                canvas.height = containerHeight;
-                canvas.width = containerHeight * imgRatio;
+            // 1. Sempre manter o canvas do tamanho da janela (considerando High DPI para mobile/retina)
+            const dpr = window.devicePixelRatio || 1;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            
+            if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
             }
 
+            context.setTransform(dpr, 0, 0, dpr, 0, 0);
             context.imageSmoothingEnabled = true;
             context.imageSmoothingQuality = 'high';
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(activeImage, 0, 0, canvas.width, canvas.height);
+            context.clearRect(0, 0, w, h);
+
+            // 2. Lógica de "Cover" para desenhar a imagem centralizada e preenchendo o canvas
+            const imgW = activeImage.naturalWidth;
+            const imgH = activeImage.naturalHeight;
+            const imgRatio = imgW / imgH;
+            const canvasRatio = w / h;
+
+            let drawW, drawH, drawX, drawY;
+
+            if (canvasRatio > imgRatio) {
+                drawW = w;
+                drawH = w / imgRatio;
+                drawX = 0;
+                drawY = (h - drawH) / 2;
+            } else {
+                drawH = h;
+                drawW = h * imgRatio;
+                drawX = (w - drawW) / 2;
+                drawY = 0;
+            }
+
+            context.drawImage(activeImage, drawX, drawY, drawW, drawH);
         }
     }
 

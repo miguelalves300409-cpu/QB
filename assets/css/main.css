@@ -64,9 +64,10 @@ body {
 .video-container {
     position: absolute;
     inset: 0;
-    /* Cobre toda a primeira dobra */
+    /* Cobre toda a primeira dobra, respeitando barras de navegação mobile (dvh) */
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     z-index: 5;
     /* Fica atrás do texto (z-index: 20) */
     pointer-events: none;
@@ -75,18 +76,13 @@ body {
     justify-content: center;
     overflow: hidden;
     mix-blend-mode: multiply;
-    /* Fundo branco fica transparente */
-    /* Filtros aprimorados para simular maior nitidez e qualidade ("pop" óptico) */
-    filter: contrast(1.12) saturate(1.15) brightness(0.98);
+    /* Filtragem premium */
+    filter: contrast(1.1) saturate(1.1) brightness(0.98);
 }
 
 .hero-video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    /* Zoom levíssimo de 1.15x apenas para encaixe perfeito */
-    transform: scale(1.15);
-    transform-origin: center center;
 }
 
 /* Buttons design */
