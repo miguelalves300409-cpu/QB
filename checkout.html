@@ -141,28 +141,12 @@
                     </div>
 
                     <div id="view-card" class="payment-view active space-y-6">
-                        <div>
-                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">Titular do Cartão</label>
-                            <input type="text" id="card-name" placeholder="NOME COMO NO CARTÃO" class="w-full input-elegant p-5 rounded-2xl outline-none uppercase font-bold tracking-widest text-xs">
-                        </div>
-                        <div class="relative">
-                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">Número do Cartão</label>
-                            <input type="text" id="card-num" placeholder="0000 0000 0000 0000" class="w-full input-elegant p-5 rounded-2xl outline-none text-lg card-mask">
-                            <iconify-icon id="card-brand" icon="solar:card-bold" class="absolute right-6 bottom-5 text-2xl text-stone-400"></iconify-icon>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">Validade</label>
-                                <input type="text" id="card-date" placeholder="MM/AA" class="w-full input-elegant p-5 rounded-2xl outline-none expiry-mask">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">CVV</label>
-                                <input type="password" id="card-cvv" placeholder="***" maxlength="3" class="w-full input-elegant p-5 rounded-2xl outline-none cvv-mask">
+                        <!-- O Mercado Pago Brick será renderizado aqui -->
+                        <div id="cardPaymentBrick_container" class="min-h-[400px]">
+                            <div class="flex items-center justify-center p-12">
+                                <iconify-icon icon="line-md:loading-twotone-loop" class="text-4xl text-stone-200"></iconify-icon>
                             </div>
                         </div>
-                        <button class="w-full bg-stone-900 text-white py-6 rounded-3xl font-bold tracking-widest uppercase text-xs hover:bg-black transition-all shadow-2xl shadow-stone-200 mt-8" onclick="finishOrder(this)">
-                            Finalizar Pedido de Luxo
-                        </button>
                     </div>
                 </div>
             </div>
@@ -188,14 +172,18 @@
                     <span class="text-xl font-display font-bold">Total</span>
                     <span id="total-val" class="text-4xl font-display font-bold tracking-tighter text-stone-900 leading-none">R$ 0,00</span>
                 </div>
-            </div>
         </div>
     </div>
 
     <script>
+        // INICIALIZAÇÃO MERCADO PAGO v2
+        const mp = new MercadoPago('APP_USR-78886367-fb76-4660-84c1-657df66dd67a', { locale: 'pt-BR' });
+        const bricksBuilder = mp.bricks();
+        let cardPaymentBrickController;
+
         const cart = JSON.parse(localStorage.getItem('qb_cart') || '[]');
         
-        function initCheckout() {
+        async function initCheckout() {
             if (cart.length === 0) { window.location.href = 'index.html'; return; }
             const recap = document.getElementById('cart-recap');
             recap.innerHTML = cart.map(item => `
@@ -205,7 +193,7 @@
                         <span class="absolute -top-2 -right-2 bg-stone-900 text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full ring-4 ring-white">${item.quantity}</span>
                     </div>
                     <div class="flex-1">
-                        <h4 class="text-[12px] font-bold text-stone-900 uppercase tracking-[0.1em]">${item.name}</h4>
+                        <h4 class="text-[12px] font-bold text-stone-900 uppercase tracking-[0.15em]">${item.name}</h4>
                         <p class="text-[10px] text-stone-400 font-mono mt-1 uppercase">Coleção QB 26</p>
                     </div>
                     <div class="text-sm font-bold text-stone-900">R$ ${(item.price * item.quantity).toLocaleString('pt-BR')},00</div>
@@ -216,15 +204,72 @@
             document.getElementById('sub-val').innerText = `R$ ${total.toLocaleString('pt-BR')},00`;
             document.getElementById('total-val').innerText = `R$ ${total.toLocaleString('pt-BR')},00`;
 
-            // Inicializar Cleave.js (Máscaras Realistas)
+            // Inicializar Cleave.js (Máscaras Realistas) para as etapas iniciais
             new Cleave('.cpf-mask', { blocks: [3, 3, 3, 2], delimiters: ['.', '.', '-'], numericOnly: true });
             new Cleave('.cep-mask', { delimiter: '-', blocks: [5, 3], numericOnly: true });
-            new Cleave('.card-mask', { creditCard: true, onCreditCardTypeChanged: (type) => {
-                const icon = document.getElementById('card-brand');
-                const icons = { 'visa': 'logos:visa', 'mastercard': 'logos:mastercard', 'amex': 'logos:amex' };
-                icon.icon = icons[type] || 'solar:card-bold';
-            }});
-            new Cleave('.expiry-mask', { date: true, datePattern: ['m', 'y'] });
+
+            // Inicializar o Brick de Pagamento
+            await renderCardPaymentBrick(bricksBuilder, total);
+        }
+
+        async function renderCardPaymentBrick(bricksBuilder, amount) {
+            const settings = {
+                initialization: { amount: amount },
+                customization: {
+                    visual: {
+                        style: {
+                            theme: 'default',
+                            customVariables: {
+                                borderRadiusMedium: '1.5rem',
+                                colorPrimary: '#1C1917',
+                                baseColorLabel: '#A8A29E',
+                                baseColorText: '#1C1917'
+                            }
+                        }
+                    },
+                    paymentMethods: {
+                        maxInstallments: 12,
+                        types: { excluded: ['ticket', 'bank_transfer'] } // Exclui boleto para focar no Pix/Cartão
+                    }
+                },
+                callbacks: {
+                    onReady: () => { console.log("MP Brick Ready"); },
+                    onSubmit: (formData) => {
+                        return new Promise((resolve, reject) => {
+                            const email = document.getElementById('chk-email').value;
+                            const cpf = document.getElementById('chk-cpf').value.replace(/\D/g, "");
+                            
+                            fetch("/api/process-payment", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    ...formData,
+                                    payer: { 
+                                        email, 
+                                        identification: { type: "CPF", number: cpf }
+                                    }
+                                }),
+                            })
+                            .then((response) => response.json())
+                            .then((result) => {
+                                if (result.status === 'approved') {
+                                    document.getElementById('success-overlay').style.display = 'flex';
+                                    resolve();
+                                } else {
+                                    alert(`Pagamento ${result.status}: ${result.status_detail}`);
+                                    reject();
+                                }
+                            })
+                            .catch((error) => {
+                                alert("Ocorreu um erro ao processar o pagamento.");
+                                reject();
+                            });
+                        });
+                    },
+                    onError: (error) => { console.error(error); }
+                }
+            };
+            cardPaymentBrickController = await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
         }
 
         async function searchAddress() {
@@ -253,62 +298,18 @@
             }});
         }
 
-        async function finishOrder(btn) {
-            const email = document.getElementById('chk-email').value;
-            const cardName = document.getElementById('card-name')?.value;
-            const name = cardName || email.split('@')[0];
-            
-            if(!email) return alert("Por favor, informe seu e-mail.");
-
-            btn.disabled = true;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<iconify-icon icon="line-md:loading-twotone-loop" class="text-2xl mr-2"></iconify-icon> Processando...`;
-
-            try {
-                const cpf = document.getElementById('chk-cpf')?.value.replace(/\D/g, "");
-
-                const response = await fetch('/api/create-preference', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        items: cart,
-                        payer: { 
-                            email, 
-                            name,
-                            identification: { type: "CPF", number: cpf }
-                        }
-                    })
-                });
-
-                const preference = await response.json();
-                
-                if (preference.init_point) {
-                    window.location.href = preference.init_point;
-                } else {
-                    throw new Error("Erro ao gerar pagamento.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Houve um erro ao processar seu pagamento. Tente novamente.");
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
-        }
-
         function setPaymentType(type, e) {
             document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
             e.currentTarget.classList.add('active');
             
-            const cardView = document.getElementById('view-card');
-            const cardFields = document.querySelectorAll('#view-card > div:not(:last-child)');
-            const mainBtn = cardView.querySelector('button');
-
+            // O Brick já cuida da visualização do Pix/Cartão se configurado, 
+            // mas aqui mantemos o comportamento de luxo das tabs.
+            const container = document.getElementById('cardPaymentBrick_container');
             if (type === 'card') {
-                gsap.to(cardFields, { opacity: 1, height: 'auto', display: 'block', duration: 0.4, stagger: 0.1 });
-                mainBtn.innerText = "Finalizar Pedido de Luxo";
+                gsap.to(container, { opacity: 1, height: 'auto', display: 'block', duration: 0.4 });
             } else {
-                gsap.to(cardFields, { opacity: 0, height: 0, display: 'none', duration: 0.4 });
-                mainBtn.innerText = `Pagar com ${type.toUpperCase()} via Mercado Pago`;
+                gsap.to(container, { opacity: 0, height: 0, display: 'none', duration: 0.4 });
+                alert(`O pagamento via ${type.toUpperCase()} será implementado seguindo o mesmo padrão de luxo.`);
             }
         }
 
