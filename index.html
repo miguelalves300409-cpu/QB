@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Óculos Especial - Lançamento</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        stone: {
+                            50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1',
+                            400: '#a8a29e', 500: '#78716c', 800: '#292524', 900: '#1c1917',
+                        },
+                        surface: '#EAEAE5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            /* Variáveis baseadas no design_system.js */
+            --bg-color: #EAEAE5;
+            --text-primary: #1C1917;
+            --text-secondary: #78716C;
+            --white: #FFFFFF;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-primary);
+            overflow-x: hidden; 
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Hero constraints - Altura da section define quanto rolamos */
+        .hero-section {
+            height: 400vh; 
+            position: relative;
+        }
+        
+        /* Sticky element keeps the hero content in place while we scroll the section */
+        .hero-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* Typography & Layout styles baseadas no design_system */
+        .text-outline {
+            -webkit-text-stroke: 1.5px var(--text-primary);
+            color: transparent;
+        }
+        
+        /* Mask Reveal Animation */
+        .text-reveal-wrapper {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+            padding-bottom: 5px;
+            padding-right: 5px;
+        }
+
+        .text-reveal-content {
+            transform: translateY(110%);
+            opacity: 0;
+            display: inline-block;
+            will-change: transform, opacity;
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+        }
+
+        /* Video element - Tela inteira e central */
+        .video-container {
+            position: absolute;
+            inset: 0; /* Cobre toda a primeira dobra */
+            width: 100vw;
+            height: 100vh;
+            z-index: 5; /* Fica atrás do texto (z-index: 20) */
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            mix-blend-mode: multiply; /* Fundo branco fica transparente */
+            /* Filtros aprimorados para simular maior nitidez e qualidade ("pop" óptico) */
+            filter: contrast(1.12) saturate(1.15) brightness(0.98);
+        }
+
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Zoom levíssimo de 1.15x apenas para encaixe perfeito */
+            transform: scale(1.15); 
+            transform-origin: center center;
+        }
+        
+        /* Buttons design */
+        .btn-primary {
+            background-color: var(--text-primary);
+            color: var(--white);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-primary:hover {
+            background-color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--text-primary);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-secondary:hover {
+            background-color: var(--text-primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            border-color: transparent;
+        }
+        .icon-arrow {
+            transition: transform 0.3s ease;
+        }
+        .btn-secondary:hover .icon-arrow {
+            transform: translateY(3px); /* Seta aponta um pouco mais no hover */
+        }
+
+        /* Ambient glow for sophistication */
+        .ambient-glow {
+            position: absolute;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, transparent 60%);
+            filter: blur(60px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.8;
+            mix-blend-mode: overlay;
+        }
+    </style>
+</head>
+<body class="selection:bg-stone-900 selection:text-white">
+
+    <main class="hero-section" id="hero">
+        <div class="hero-sticky">
+            
+            <div class="ambient-glow"></div>
+
+            <!-- Centro/Direita: Mídia Principal -->
+            <div class="video-container fade-in-up" id="video-container">
+                <!-- Apple-style: Image Sequence for perfect scrubbing -->
+                <canvas id="hero-canvas" class="hero-video"></canvas>
+            </div>
+
+            <!-- Left/Extrema Direita Layout -->
+            <div class="w-full h-full max-w-[1440px] mx-auto px-8 md:px-8 lg:px-2 flex justify-between items-center relative z-20">
+                
+                <!-- Lado Esquerdo: Conteúdo Compactado -->
+                <div class="w-full md:w-[45%] flex flex-col justify-center items-start -ml-2 lg:-ml-4">
+                    
+                    <!-- Eyebrow text -->
+                    <div class="mb-4 fade-in-up eyebrow-text">
+                        <span class="inline-block px-3 py-1 border border-stone-300 rounded-full text-[10px] uppercase font-mono tracking-[0.2em] text-stone-500 bg-white/30 backdrop-blur-md">
+                            &bull; SÉRIE EXCLUSIVA
+                        </span>
+                    </div>
+
+                    <!-- Headline (Mistura Sólido e Outline) -->
+                    <h1 class="text-5xl md:text-6xl lg:text-[5.5rem] font-display font-bold leading-[0.9] tracking-tighter text-stone-900 mb-5 hero-headline flex flex-col items-start gap-1">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content text-solid">A VISÃO</span></div>
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content text-outline cursor-default">ABSOLUTA</span></div>
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content text-solid">PARA TODOS.</span></div>
+                    </h1>
+
+                    <!-- Subheadline -->
+                    <p class="text-base text-stone-600 max-w-sm font-light leading-relaxed mb-8 fade-in-up sub-headline">
+                        Descubra a união perfeita entre o luxo minimalista e a clareza óptica sem precedentes. 
+                        Nossa nova série foi forjada com precisão absoluta, elevando a experiência do dia a dia.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-wrap gap-4 items-center fade-in-up ctas">
+                        <!-- Botão Primário Sólido -->
+                        <button class="btn-primary px-8 py-4 rounded-full text-sm font-medium tracking-wide flex items-center justify-center">
+                            Comprar Agora
+                        </button>
+                        
+                        <!-- Botão Secundário Outline -->
+                        <button class="btn-secondary px-8 py-4 rounded-full text-sm font-medium tracking-wide flex items-center justify-center gap-2 group">
+                            Explorar
+                            <iconify-icon icon="solar:arrow-down-linear" class="text-lg icon-arrow"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Extrema Direita: Navegação e Informações Discretas -->
+                <div class="hidden md:flex absolute right-6 md:right-16 bottom-0 top-0 flex-col justify-center items-end gap-16 font-mono text-xs uppercase tracking-widest text-stone-400 fade-in-up vertical-nav">
+                    
+                    <!-- Setas Prev -->
+                    <div class="flex items-center gap-2 -rotate-90 origin-right translate-x-4 cursor-pointer hover:text-stone-900 transition-colors">
+                        <iconify-icon icon="solar:arrow-up-linear" class="text-sm rotate-90"></iconify-icon>
+                        <span>PREV</span>
+                    </div>
+                    
+                    <!-- Marcadores -->
+                    <div class="flex flex-col items-center gap-2 mt-12 w-4">
+                        <div class="w-px h-12 bg-stone-300"></div>
+                        <span class="text-stone-900 font-medium my-1 block transform -rotate-90">01</span>
+                        <span class="text-stone-400 block transform -rotate-90 mt-2">04</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Exemplo de Conteúdo Sucedendo a Hero Page (Para teste do Scroll) -->
+    <section class="min-h-screen bg-stone-950 text-white flex flex-col justify-center items-center font-display" style="z-index: 30; position:relative;">
+        <h2 class="text-5xl font-light mb-6">Explore o Futuro.</h2>
+        <p class="text-stone-400 font-light max-w-sm text-center">Os detalhes que você visualizou formam o corpo arquitetural da mais nova série avançada de óculos.</p>
+    </section>
+
+    <!-- Scripts - Configuração GSAP e Vídeo Scrub -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            /* 1. Animação de Entrada (Intro / Hero Reveal) */
+            const tlIntro = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+            // Textos grandes entrando com Fade mask (de baixo pra cima, linha por linha)
+            tlIntro.to(".text-reveal-content", {
+                y: "0%",
+                opacity: 1,
+                duration: 1.4,
+                stagger: 0.2
+            });
+
+            // Resto dos elementos da esquerda (Eyebrow, Paragrafo, Botoes) entrando suave
+            tlIntro.to([".eyebrow-text", ".sub-headline", ".ctas"], {
+                y: 0,
+                opacity: 1,
+                duration: 1.2,
+                stagger: 0.15
+            }, "-=1.0");
+
+            // Mídia Central (Vídeo) e as setinhas verticais
+            tlIntro.to(["#video-container", ".vertical-nav"], {
+                y: 0, // Video já ocupa toda a altura com inset: 0
+                opacity: 1,
+                duration: 1.5,
+                ease: "power2.out"
+            }, "-=1.0");
+
+
+            /* 2. Apple-style Image Sequence para Scrub Perfeito (Revertido para Frames Nativos) */
+            const canvas = document.getElementById("hero-canvas");
+            const context = canvas.getContext("2d");
+            
+            const frameCount = 40; // Total de frames na pasta
+            // Ajustado template literal (backticks) para funcionar e interpolar nativamente em JS:
+            const currentFrame = index => `assets/video_frames/ezgif-frame-${String(index).padStart(3, '0')}.jpg`;
+            const images = [];
+            const glassesObj = { frame: 1 };
+            
+            // Buffer Pré-carregamento total: injeta as Imagens diretamente na memória para eliminar o engasgo
+            for (let i = 1; i <= frameCount; i++) {
+                const img = new Image();
+                img.src = currentFrame(i);
+                images.push(img);
+            }
+
+            let loadedCount = 0;
+            images.forEach(img => {
+                if(img.complete) loadedCount++;
+                else img.onload = () => {
+                    loadedCount++;
+                    if(loadedCount === 1) render(); // Força render assim que o primeiro frame for decodificado
+                };
+            });
+            if(images[0] && images[0].complete) render(); // Tratativa para browser cache
+
+            let lastLoadedFrameIndex = 0;
+
+            function render() {
+                let frameIndex = Math.round(glassesObj.frame) - 1;
+                if (frameIndex < 0) frameIndex = 0;
+                if (frameIndex >= frameCount) frameIndex = frameCount - 1;
+                
+                let activeImage = images[frameIndex];
+                
+                // Fallback macio na rolagem rápida
+                if (!activeImage || !activeImage.complete) {
+                    activeImage = images[lastLoadedFrameIndex];
+                } else {
+                    lastLoadedFrameIndex = frameIndex;
+                }
+
+                if (activeImage && activeImage.complete) {
+                    // Mapeia proporção caso redimensione a janela
+                    if (activeImage.width > 0 && canvas.width !== activeImage.width) {
+                        canvas.width = activeImage.width;
+                        canvas.height = activeImage.height;
+                    }
+                    
+                    // Forçar o navegador a usar renderização de alta qualidade ao plotar 
+                    context.imageSmoothingEnabled = true;
+                    context.imageSmoothingQuality = 'high';
+                    
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    context.drawImage(activeImage, 0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            gsap.to(glassesObj, {
+                frame: frameCount,
+                snap: "frame",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".hero-section",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1.2
+                },
+                onUpdate: render
+            });
+
+            /* 3. Parallax e Desfoque nas Letrings ao fazer a rolagem (Scroll Down) */
+            gsap.to([".eyebrow-text", ".hero-headline", ".sub-headline", ".ctas", ".vertical-nav"], {
+                y: -120, // Move 120px para cima acompanhando a rolagem
+                opacity: 0,
+                filter: "blur(12px)", // Efeito cinematic de Apple
+                stagger: 0.06, // Cascata element-by-element
+                ease: "power2.inOut",
+                scrollTrigger: {
+                    trigger: ".hero-section",
+                    start: "top top",
+                    end: "top -100%", // Acontece apenas durante a primeira dobra de rolagem (100vh)
+                    scrub: 1.0 // Sincronizado suavemente com a roda do mouse
+                }
+            });
+        });
+    </script>
+</body>
+</html>
