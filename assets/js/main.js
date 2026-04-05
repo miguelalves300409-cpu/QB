@@ -365,44 +365,81 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const loginBtn = document.getElementById('mock-login-btn');
-    if (loginBtn) {
-        loginBtn.onclick = () => {
-            const userName = "Miguel";
+    /* --- FIREBASE AUTH REAL --- */
+    const { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = window.qbAuthMethods || {};
+    const auth = window.qbAuth;
+
+    if (auth) {
+        onAuthStateChanged(auth, (user) => {
+            const headerLabel = document.getElementById('user-name-header');
             const viewLogin = document.getElementById('view-login');
             const viewMember = document.getElementById('view-member');
-            const headerLabel = document.getElementById('user-name-header');
             const drawerName = document.getElementById('user-display-name');
 
-            if(viewLogin) viewLogin.style.display = 'none';
-            if(viewMember) viewMember.classList.add('active');
-            if(headerLabel) {
-                headerLabel.innerText = `Olá, ${userName}`;
-                headerLabel.classList.remove('opacity-0', 'translate-x-2');
-                headerLabel.style.opacity = "1";
-                headerLabel.style.transform = "translateX(0)";
+            if (user) {
+                // Usuário Logado
+                const name = user.displayName || user.email.split('@')[0];
+                if(headerLabel) {
+                    headerLabel.innerText = `Olá, ${name}`;
+                    headerLabel.classList.remove('opacity-0', 'translate-x-1');
+                    headerLabel.style.opacity = "1"; headerLabel.style.transform = "translateX(0)";
+                }
+                if(drawerName) drawerName.innerText = name;
+                if(viewLogin) viewLogin.style.display = 'none';
+                if(viewMember) viewMember.classList.add('active');
+            } else {
+                // Usuário Deslogado
+                if(headerLabel) {
+                    headerLabel.innerText = "Log In";
+                    headerLabel.style.opacity = "0.5";
+                }
+                if(viewLogin) viewLogin.style.display = 'block';
+                if(viewMember) viewMember.classList.remove('active');
             }
-            if(drawerName) drawerName.innerText = userName;
+        });
+    }
 
-            loginBtn.innerText = "Entrando...";
-            setTimeout(() => toggleUserDrawer(false), 500);
-            localStorage.setItem('qb_user', JSON.stringify({ name: userName }));
+    const loginBtn = document.getElementById('mock-login-btn');
+    if (loginBtn && auth) {
+        loginBtn.onclick = async () => {
+            const email = document.querySelector('#view-login input[type="email"]')?.value;
+            const pass = document.querySelector('#view-login input[type="password"]')?.value;
+            
+            if(!email || !pass) return alert("Preencha todos os campos.");
+            
+            loginBtn.innerText = "Verificando...";
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                toggleUserDrawer(false);
+            } catch (error) {
+                alert("Erro ao entrar: Verifique suas credenciais.");
+                loginBtn.innerText = "Entrar no Clube";
+            }
         };
     }
 
-    window.logoutMock = () => { localStorage.removeItem('qb_user'); location.reload(); };
-
-    const savedUser = JSON.parse(localStorage.getItem('qb_user'));
-    if (savedUser) {
-        const viewLogin = document.getElementById('view-login');
-        const viewMember = document.getElementById('view-member');
-        const headerLabel = document.getElementById('user-name-header');
-        if(viewLogin) viewLogin.style.display = 'none';
-        if(viewMember) viewMember.classList.add('active');
-        if(headerLabel) {
-            headerLabel.innerText = `Olá, ${savedUser.name}`; headerLabel.style.opacity = "1"; headerLabel.style.transform = "translateX(0)";
-        }
+    // Cadastro de Usuário
+    const registerBtn = document.querySelector('#view-register button');
+    if (registerBtn && auth) {
+        registerBtn.onclick = async () => {
+            const email = document.querySelector('#view-register input[type="email"]')?.value;
+            const pass = document.querySelector('#view-register input[type="password"]')?.value;
+            
+            if(!email || !pass) return alert("Preencha e-mail e senha.");
+            
+            registerBtn.innerText = "Criando Conta...";
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+                alert("Conta criada com sucesso! Bem-vindo ao Clube QB.");
+                toggleUserDrawer(false);
+            } catch (error) {
+                alert("Erro ao criar conta: " + error.message);
+                registerBtn.innerText = "Confirmar Cadastro";
+            }
+        };
     }
+
+    window.logoutMock = () => { if(auth) signOut(auth).then(() => location.reload()); };
 
     const searchBtn = document.getElementById('header-search-btn');
     const searchOverlay = document.getElementById('search-overlay');

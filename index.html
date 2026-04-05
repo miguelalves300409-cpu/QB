@@ -49,6 +49,25 @@
     
     <!-- Custom Styles -->
     <link rel="stylesheet" href="assets/css/main.css">
+
+    <!-- Firebase SDK (Modular v9) -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+      import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+      
+      const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "seu-projeto.firebaseapp.com",
+        projectId: "seu-projeto",
+        storageBucket: "seu-projeto.appspot.com",
+        messagingSenderId: "000000000000",
+        appId: "1:000000000000:web:00000000000000"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      window.qbAuth = getAuth(app);
+      window.qbAuthMethods = { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut };
+    </script>
 </head>
 
 <body class="bg-[#fdfcf0] text-black antialiased overflow-x-hidden selection:bg-stone-200">
