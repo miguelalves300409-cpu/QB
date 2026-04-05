@@ -505,27 +505,43 @@ document.addEventListener("DOMContentLoaded", () => {
         onSnapshot(doc(db, "settings", "catalog"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
-                Object.keys(data).forEach(prodId => {
-                    const prodData = data[prodId];
-                    // Busca todos os elementos que representam este produto
+                Object.keys(data).forEach(key => {
+                    // Mapeia chaves como "p1" ou "1" para o ID do produto
+                    const prodId = key.startsWith('p') ? key.substring(1) : key;
+                    const rawValue = data[key];
+                    // Aceita tanto {price: 1200} quanto o valor direto 1200
+                    const price = (typeof rawValue === 'object') ? rawValue.price : rawValue;
+                    const name = (typeof rawValue === 'object') ? rawValue.name : null;
+
                     const cards = document.querySelectorAll(`article.product-card`);
                     cards.forEach(card => {
                         const addToCartBtn = card.querySelector(`[data-id="${prodId}"]`);
                         if(addToCartBtn) {
-                            // Atualiza os dados de preço reais (para o carrinho)
-                            if(prodData.price) addToCartBtn.setAttribute('data-price', prodData.price);
-                            if(prodData.name) addToCartBtn.setAttribute('data-name', prodData.name);
+                            // 1. Atualiza o valor do Carrinho (Data Attributes)
+                            if(price) addToCartBtn.setAttribute('data-price', price);
+                            if(name) addToCartBtn.setAttribute('data-name', name);
                             
-                            // Atualiza os elementos Visuais na Tela (SEO e UI)
+                            // 2. Atualiza o Preço Visual na Tela (Texto)
+                            const priceElem = card.querySelector('.text-stone-400.font-medium, .text-stone-900.font-bold');
+                            // Procura o elemento que contém o "R$"
+                            const allTexts = card.querySelectorAll('p, span');
+                            allTexts.forEach(txt => {
+                                if(txt.innerText.includes('R$') && price) {
+                                    txt.innerText = `R$ ${parseInt(price).toLocaleString('pt-BR')},00`;
+                                }
+                            });
+
+                            // 3. Atualiza o Nome Visual
                             const titleElem = card.querySelector('.product-title-reveal');
-                            if(titleElem && prodData.name) titleElem.innerText = prodData.name;
+                            if(titleElem && name) titleElem.innerText = name;
                             
-                            // Se o Drawer de Detalhes estiver aberto para este produto, atualiza lá também
+                            // 4. Atualiza o Drawer (Se estiver aberto)
                             const drawerName = document.getElementById('drawer-p-name');
-                            if(drawerName && drawerName.innerText.trim() === addToCartBtn.getAttribute('data-name')) {
+                            const currentBtnName = addToCartBtn.getAttribute('data-name');
+                            if(drawerName && drawerName.innerText.trim() === currentBtnName) {
                                 const drawerPrice = document.getElementById('drawer-p-price');
-                                if(drawerPrice && prodData.price) {
-                                    drawerPrice.innerText = `R$ ${parseInt(prodData.price).toLocaleString('pt-BR')},00`;
+                                if(drawerPrice && price) {
+                                    drawerPrice.innerText = `R$ ${parseInt(price).toLocaleString('pt-BR')},00`;
                                 }
                             }
                         }
