@@ -495,4 +495,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const logoHeader = document.querySelector('header a[href="index.html"]');
     if (logoHeader) logoHeader.onclick = (e) => { e.preventDefault(); gsap.to(window, { duration: 1.5, scrollTo: 0, ease: "power4.inOut" }); };
+
+    /* --- GESTÃO DINÂMICA DE INVENTÁRIO (ADMIN) --- */
+    const { doc, getDoc, updateDoc, setDoc, onSnapshot } = window.qbDBMethods || {};
+    const db = window.qbDB;
+
+    if (db) {
+        // Observador Geral do Catálogo (Firestore -> Site)
+        onSnapshot(doc(db, "settings", "catalog"), (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.data();
+                Object.keys(data).forEach(prodId => {
+                    const prodData = data[prodId];
+                    // Busca todos os elementos que representam este produto
+                    const cards = document.querySelectorAll(`article.product-card`);
+                    cards.forEach(card => {
+                        const addToCartBtn = card.querySelector(`[data-id="${prodId}"]`);
+                        if(addToCartBtn) {
+                            // Atualiza os dados de preço reais (para o carrinho)
+                            if(prodData.price) addToCartBtn.setAttribute('data-price', prodData.price);
+                            if(prodData.name) addToCartBtn.setAttribute('data-name', prodData.name);
+                            
+                            // Atualiza os elementos Visuais na Tela (SEO e UI)
+                            const titleElem = card.querySelector('.product-title-reveal');
+                            if(titleElem && prodData.name) titleElem.innerText = prodData.name;
+                            
+                            // Se o Drawer de Detalhes estiver aberto para este produto, atualiza lá também
+                            const drawerName = document.getElementById('drawer-p-name');
+                            if(drawerName && drawerName.innerText.trim() === addToCartBtn.getAttribute('data-name')) {
+                                const drawerPrice = document.getElementById('drawer-p-price');
+                                if(drawerPrice && prodData.price) {
+                                    drawerPrice.innerText = `R$ ${parseInt(prodData.price).toLocaleString('pt-BR')},00`;
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    // Função para você usar no console ou em um painel futuro: 
+    // updateProductPrice('1', 1500)
+    window.updateProductPrice = async (id, newPrice) => {
+        if (!db) return;
+        try {
+            const catalogRef = doc(db, "settings", "catalog");
+            const snapshot = await getDoc(catalogRef);
+            
+            if(!snapshot.exists()) {
+                // Se for a primeira vez, cria a base do catálogo
+                await setDoc(catalogRef, { [id]: { price: newPrice, name: "Produto Novo" } });
+            } else {
+                await updateDoc(catalogRef, { [`${id}.price`]: newPrice });
+            }
+            console.log(`Preço de ID ${id} atualizado para R$ ${newPrice}`);
+        } catch (error) {
+            console.error("Erro ao atualizar catálogo:", error);
+        }
+    };
 });

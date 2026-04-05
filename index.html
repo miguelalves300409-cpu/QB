@@ -50,10 +50,10 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="assets/css/main.css">
 
-    <!-- Firebase SDK (Modular v9) -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
       import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+      import { getFirestore, doc, getDoc, updateDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
       
       const firebaseConfig = {
         apiKey: "SUA_API_KEY",
@@ -67,6 +67,8 @@
       const app = initializeApp(firebaseConfig);
       window.qbAuth = getAuth(app);
       window.qbAuthMethods = { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut };
+      window.qbDB = getFirestore(app);
+      window.qbDBMethods = { doc, getDoc, updateDoc, setDoc, onSnapshot };
     </script>
 </head>
 
