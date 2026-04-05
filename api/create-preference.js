@@ -26,9 +26,9 @@ module.exports = async (req, res) => {
           name: payer.name
         },
         back_urls: {
-          success: "https://seu-site.vercel.app/index.html",
-          failure: "https://seu-site.vercel.app/checkout.html",
-          pending: "https://seu-site.vercel.app/index.html"
+          success: `https://${req.headers.host}/index.html`,
+          failure: `https://${req.headers.host}/checkout.html`,
+          pending: `https://${req.headers.host}/index.html`
         },
         auto_return: "approved",
         payment_methods: {

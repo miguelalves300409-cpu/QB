@@ -451,12 +451,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const productCatalog = [
         { name: "IBIZA", id: "1", img: "assets/img/tech_glasses.png" },
         { name: "MALDIVES", id: "2", img: "assets/img/white_glasses.png" },
-        { name: "ST. TROPEZ", id: "3", img: "assets/img/PRODUTO%2003.png" },
-        { name: "MYKONOS", id: "4", img: "assets/img/PRODUTO%2004.png" },
-        { name: "BORA BORA", id: "5", img: "assets/img/PRODUTO%2005.png" },
-        { name: "CAPRI", id: "6", img: "assets/img/PRODUTO%2006.png" },
-        { name: "NAVARIO", id: "7", img: "assets/img/PRODUTO%2007.png" },
-        { name: "VIK", id: "8", img: "assets/img/PRODUTO%2008.png" }
+        { name: "ST. TROPEZ", id: "3", img: "assets/img/produto 03.png" },
+        { name: "MYKONOS", id: "4", img: "assets/img/produto 04.png" },
+        { name: "BORA BORA", id: "5", img: "assets/img/produto 05.png" },
+        { name: "CAPRI", id: "6", img: "assets/img/produto 06.png" },
+        { name: "NAVARIO", id: "7", img: "assets/img/produto 07.png" },
+        { name: "VIK", id: "8", img: "assets/img/produto 08.png" }
     ];
 
     if (searchBtn) searchBtn.onclick = () => { searchOverlay.classList.add('active'); setTimeout(() => searchInput.focus(), 500); };

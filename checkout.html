@@ -70,24 +70,13 @@
                     Voltar à Loja
                 </a>
 
-                <!-- STEP 1: LOGISTICS & CONTACT -->
+                <!-- STEP 1: LOGISTICS -->
                 <div id="checkout-step-1" class="step-content active">
-                    <h1 class="text-4xl md:text-5xl font-display font-bold tracking-tight mb-3">Identificação & Entrega</h1>
-                    <p class="text-stone-400 text-sm font-light mb-10">Preencha os dados básicos para o envio.</p>
+                    <h1 class="text-4xl md:text-5xl font-display font-bold tracking-tight mb-3">Dados de Entrega</h1>
+                    <p class="text-stone-400 text-sm font-light mb-10">Onde devemos entregar seu pedido?</p>
                     
                     <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">E-mail</label>
-                                <input type="email" id="chk-email" placeholder="nome@exemplo.com" class="w-full input-elegant p-4 rounded-2xl outline-none font-medium">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">WhatsApp</label>
-                                <input type="text" id="chk-phone" placeholder="(00) 00000-0000" class="w-full input-elegant p-4 rounded-2xl outline-none phone-mask">
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-50">
+                        <div class="pt-4">
                             <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">CEP de Entrega</label>
                             <div class="flex gap-2">
                                 <input type="text" id="chk-cep" placeholder="00000-000" class="w-full input-elegant p-5 rounded-2xl outline-none text-lg tracking-wider cep-mask">
@@ -122,8 +111,19 @@
 
                 <!-- STEP 2: PAYMENT SECURE -->
                 <div id="checkout-step-2" class="step-content">
-                    <h1 class="text-4xl md:text-5xl font-display font-bold tracking-tight mb-3">Pagamento Seguro</h1>
-                    <p class="text-stone-400 text-sm font-light mb-10">Escolha o método e finalize agora.</p>
+                    <h1 class="text-4xl md:text-5xl font-display font-bold tracking-tight mb-3">Identificação & Pagamento</h1>
+                    <p class="text-stone-400 text-sm font-light mb-10">Confirme seus dados e finalize o pedido.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                        <div>
+                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">E-mail</label>
+                            <input type="email" id="chk-email" placeholder="nome@exemplo.com" class="w-full input-elegant p-4 rounded-2xl outline-none font-medium text-xs">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-400 block mb-3">WhatsApp</label>
+                            <input type="text" id="chk-phone" placeholder="(00) 00000-0000" class="w-full input-elegant p-4 rounded-2xl outline-none phone-mask text-xs">
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-3 gap-4 mb-10">
                         <div class="payment-option active rounded-3xl p-6 flex flex-col items-center" onclick="setPaymentType('card', event)">
@@ -240,26 +240,28 @@
         }
 
         function goToPaymentStep() {
-            const email = document.getElementById('chk-email').value;
+            const cep = document.getElementById('chk-cep').value;
             const num = document.getElementById('chk-num').value;
-            if (!email.includes('@') || !num) return alert("Por favor, preencha todos os campos corretamente.");
+            if (cep.length < 8 || !num) return alert("Por favor, preencha os dados de endereço.");
 
-            gsap.to("#checkout-step-1", { opacity: 0, x: -20, onComplete: () => {
+            gsap.to("#checkout-step-1", { opacity: 0, x: -20, duration: 0.5, onComplete: () => {
                 document.getElementById('checkout-step-1').classList.remove('active');
                 document.getElementById('checkout-step-2').classList.add('active');
                 document.getElementById('dot-1').classList.remove('active');
                 document.getElementById('dot-2').classList.add('active');
-                gsap.fromTo("#checkout-step-2", { opacity: 0, x: 20 }, { opacity: 1, x: 0 });
+                gsap.fromTo("#checkout-step-2", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.5 });
             }});
         }
 
         async function finishOrder(btn) {
             const email = document.getElementById('chk-email').value;
-            const name = document.getElementById('card-name')?.value || "Cliente QB";
+            const cardName = document.getElementById('card-name')?.value;
+            const name = cardName || email.split('@')[0];
             
             if(!email) return alert("Por favor, informe seu e-mail.");
 
             btn.disabled = true;
+            const originalText = btn.innerHTML;
             btn.innerHTML = `<iconify-icon icon="line-md:loading-twotone-loop" class="text-2xl mr-2"></iconify-icon> Processando...`;
 
             try {
@@ -275,7 +277,6 @@
                 const preference = await response.json();
                 
                 if (preference.init_point) {
-                    // Redireciona para o checkout seguro do Mercado Pago
                     window.location.href = preference.init_point;
                 } else {
                     throw new Error("Erro ao gerar pagamento.");
@@ -284,13 +285,25 @@
                 console.error(error);
                 alert("Houve um erro ao processar seu pagamento. Tente novamente.");
                 btn.disabled = false;
-                btn.innerHTML = "Finalizar Pedido de Luxo";
+                btn.innerHTML = originalText;
             }
         }
 
         function setPaymentType(type, e) {
             document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
             e.currentTarget.classList.add('active');
+            
+            const cardView = document.getElementById('view-card');
+            const cardFields = document.querySelectorAll('#view-card > div:not(:last-child)');
+            const mainBtn = cardView.querySelector('button');
+
+            if (type === 'card') {
+                gsap.to(cardFields, { opacity: 1, height: 'auto', display: 'block', duration: 0.4, stagger: 0.1 });
+                mainBtn.innerText = "Finalizar Pedido de Luxo";
+            } else {
+                gsap.to(cardFields, { opacity: 0, height: 0, display: 'none', duration: 0.4 });
+                mainBtn.innerText = `Pagar com ${type.toUpperCase()} via Mercado Pago`;
+            }
         }
 
         initCheckout();
