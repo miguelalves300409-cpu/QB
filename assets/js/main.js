@@ -95,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (activeImage && activeImage.complete && activeImage.naturalWidth > 0) {
-            // 1. Sempre manter o canvas do tamanho da janela (considerando High DPI para mobile/retina)
             const dpr = window.devicePixelRatio || 1;
             const w = window.innerWidth;
             const h = window.innerHeight;
@@ -112,26 +111,31 @@ document.addEventListener("DOMContentLoaded", () => {
             context.imageSmoothingQuality = 'high';
             context.clearRect(0, 0, w, h);
 
-            // 2. Lógica Inteligente de Enquadramento (Ajuste para Mobile)
             const imgW = activeImage.naturalWidth;
             const imgH = activeImage.naturalHeight;
             const imgRatio = imgW / imgH;
-            const canvasRatio = w / h;
-
-            let drawW, drawH, drawX, drawY;
-
-            // Se for mobile (Vertical), priorizamos o "CONTAIN" para ver os óculos inteiros
-            // Se for desktop (Horizontal), mantemos o "COVER" para impacto imersivo
+            
             const isMobile = w < 768;
 
             if (isMobile) {
-                // Lógica de "CONTAIN" - Ver óculos completo na largura do celular
-                drawW = w * 0.9; // 90% da largura para não encostar nas bordas
-                drawH = drawW / imgRatio;
-                drawX = (w - drawW) / 2;
-                drawY = (h - drawH) / 2;
+                // ROTAÇÃO PARA FORMATO VERTICAL (9:16 / Reels Style)
+                context.save();
+                context.translate(w / 2, h / 2);
+                context.rotate(Math.PI / 2); // Rotaciona 90 graus
+                
+                // Desenha os óculos ocupando a altura do celular (que virou largura na rotação)
+                // Usamos um fator de escala para que os óculos "em pé" caibam na tela
+                const scale = (h * 0.8) / imgW; 
+                const drawW = imgW * scale;
+                const drawH = imgH * scale;
+                
+                context.drawImage(activeImage, -drawW / 2, -drawH / 2, drawW, drawH);
+                context.restore();
             } else {
-                // Lógica de "COVER" para Desktop
+                // Lógica de "COVER" para Desktop (Horizontal)
+                const canvasRatio = w / h;
+                let drawW, drawH, drawX, drawY;
+
                 if (canvasRatio > imgRatio) {
                     drawW = w;
                     drawH = w / imgRatio;
@@ -143,9 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     drawX = (w - drawW) / 2;
                     drawY = 0;
                 }
+                context.drawImage(activeImage, drawX, drawY, drawW, drawH);
             }
-
-            context.drawImage(activeImage, drawX, drawY, drawW, drawH);
         }
     }
 
