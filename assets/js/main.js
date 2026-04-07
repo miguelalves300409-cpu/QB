@@ -401,11 +401,11 @@ function initApp() {
         if (titleEl) { titleEl.closest('.text-reveal-wrapper').style.cursor = 'pointer'; titleEl.closest('.text-reveal-wrapper').onclick = openCard; }
     });
 
-    /* ── 7. USER AUTH (adiado 800ms para não competir com LCP) ── */
-    setTimeout(() => {
+    /* ── 7. USER AUTH — espera Firebase lazy-load (evento 'firebase-ready') ── */
+    function initFirebaseAuth() {
         const { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = window.qbAuthMethods || {};
         const auth = window.qbAuth;
-        if (!auth) return;
+        if (!auth) return; // Firebase não disponível, ignora silenciosamente
 
         onAuthStateChanged(auth, user => {
             const lbl     = document.getElementById('user-name-header');
@@ -467,7 +467,14 @@ function initApp() {
                 });
             });
         }
-    }, 800);
+    } // fim initFirebaseAuth
+
+    // Executa quando Firebase estiver pronto (lazy load) ou imediatamente se já carregou
+    if (window.qbAuth) {
+        initFirebaseAuth();
+    } else {
+        window.addEventListener('firebase-ready', initFirebaseAuth, { once: true });
+    }
 
     window.switchUserView = target => {
         const vL = document.getElementById('view-login');

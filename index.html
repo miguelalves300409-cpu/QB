@@ -12,12 +12,10 @@
     <meta property="og:description" content="A visão absoluta para todos.">
     <meta property="og:type" content="website">
 
-    <!-- Preconnect apenas para o que realmente usamos no caminho crítico -->
+    <!-- Preconnect para recursos do caminho crítico -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://www.gstatic.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
 
     <!-- Prefetch: próxima página provável (checkout) -->
     <link rel="prefetch" href="checkout.html" as="document">
@@ -97,25 +95,46 @@
         .hidden-mobile{display:none}
     </style>
 
-    <!-- CSS principal e design system -->
+    <!-- CSS principal: bloqueante pois contém estilos above-the-fold -->
     <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/tailwind-static.css">
+    <!-- tailwind-static: NÃO bloqueante — carrega após main.css, sem atrasar FCP/LCP -->
+    <link rel="preload" href="assets/css/tailwind-static.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="assets/css/tailwind-static.css"></noscript>
 
-    <!-- Firebase — modular, não bloqueia nada -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-      import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-      import { getFirestore, doc, getDoc, updateDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-      const firebaseConfig = {
-        apiKey:"AIzaSyDuilYNLCH21KZPbryMY-ZYPPjNgUxOfyE",authDomain:"qb-oficial.firebaseapp.com",
-        projectId:"qb-oficial",storageBucket:"qb-oficial.firebasestorage.app",
-        messagingSenderId:"123203227653",appId:"1:123203227653:web:cfd9fb640ff9397ef84c6c"
-      };
-      const app = initializeApp(firebaseConfig);
-      window.qbAuth = getAuth(app);
-      window.qbAuthMethods = { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut };
-      window.qbDB = getFirestore(app);
-      window.qbDBMethods = { doc, getDoc, updateDoc, setDoc, onSnapshot };
+    <!-- Firebase — carregado de forma lazy após idle para não impactar LCP/FCP -->
+    <script>
+    // Adia o carregamento do Firebase até que o browser esteja ocioso (ou primeira interação)
+    (function() {
+      var _fbLoaded = false;
+      function loadFirebase() {
+        if (_fbLoaded) return;
+        _fbLoaded = true;
+        var s = document.createElement('script');
+        s.type = 'module';
+        s.textContent = [
+          'import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";',
+          'import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";',
+          'import { getFirestore, doc, getDoc, updateDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";',
+          'const cfg={apiKey:"AIzaSyDuilYNLCH21KZPbryMY-ZYPPjNgUxOfyE",authDomain:"qb-oficial.firebaseapp.com",projectId:"qb-oficial",storageBucket:"qb-oficial.firebasestorage.app",messagingSenderId:"123203227653",appId:"1:123203227653:web:cfd9fb640ff9397ef84c6c"};',
+          'const app=initializeApp(cfg);',
+          'window.qbAuth=getAuth(app);',
+          'window.qbAuthMethods={signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut};',
+          'window.qbDB=getFirestore(app);',
+          'window.qbDBMethods={doc,getDoc,updateDoc,setDoc,onSnapshot};',
+          'window.dispatchEvent(new Event("firebase-ready"));'
+        ].join('\n');
+        document.head.appendChild(s);
+      }
+      // Carrega após interação do usuário OU após 4s (whichever comes first)
+      var events = ['mousedown','touchstart','keydown','scroll','mousemove'];
+      function onInteract() {
+        loadFirebase();
+        events.forEach(function(e){ document.removeEventListener(e, onInteract, {passive:true}); });
+      }
+      events.forEach(function(e){ document.addEventListener(e, onInteract, {passive:true}); });
+      // Fallback: carrega após 4 segundos
+      setTimeout(loadFirebase, 4000);
+    })();
     </script>
 
     <!-- Script inline crítico: renderiza frame-001 NO CANVAS imediatamente,
@@ -175,7 +194,7 @@
     <header class="site-header" id="site-header">
         <div class="header-left">
             <a href="index.html" class="logo-link">
-                <img src="assets/img/logo.png" alt="Logo QB Oficial" class="logo-img" width="120" height="40">
+                <img src="assets/img/logo-small.png" alt="Logo QB Oficial" class="logo-img" width="120" height="40" fetchpriority="high">
             </a>
         </div>
         <nav class="header-nav" aria-label="Menu principal">
@@ -553,7 +572,7 @@
             </div>
             <footer class="site-footer product-elem">
                 <span class="footer-copy">&copy; 2026 QB OFICIAL &mdash; ALL THE TIME</span>
-                <img src="assets/img/logo.png" class="footer-logo" alt="QB Oficial" width="80" height="26" loading="lazy">
+                <img src="assets/img/logo-small.png" class="footer-logo" alt="QB Oficial" width="80" height="26" loading="lazy">
                 <span class="footer-links">Privacy &bull; Terms &bull; Cookies</span>
             </footer>
         </div>
