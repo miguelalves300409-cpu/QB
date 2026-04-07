@@ -53,8 +53,8 @@
         .header-actions{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:.5rem}
         .header-icons{display:flex;align-items:center;gap:.375rem}
         .icon-btn{width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:#1c1917;padding:0;transition:transform .3s ease}
-        .wa-btn{display:none}
-        @media(min-width:768px){.wa-btn{display:flex}}
+        .wa-btn{display:flex}
+        @media(max-width:767px){.wa-btn iconify-icon{width:18px}}
         .cart-btn{position:relative}
         .cart-count{position:absolute;top:-2px;right:-2px;background:#1c1917;color:#fff;font-size:7px;font-weight:700;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
 
@@ -221,6 +221,11 @@
             </div>
         </div>
     </header>
+
+    <!-- WhatsApp Floating Button (Mobile Only) -->
+    <a href="https://wa.me/message/FV37UMP6GFRWL1" class="wa-floating-btn" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Concierge">
+        <iconify-icon icon="ic:baseline-whatsapp" width="24"></iconify-icon>
+    </a>
 
     <!-- Search Overlay -->
     <div id="search-overlay" class="search-overlay" role="search" aria-label="Pesquisa de produtos">

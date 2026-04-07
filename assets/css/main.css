@@ -361,4 +361,36 @@ header.scrolled, .site-header.scrolled {
 }
 
 /* ── Selection ── */
+/* ── WhatsApp Floating Button ── */
+.wa-floating-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  display: none; /* Mobile only via media query */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  z-index: 998;
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease;
+}
+
+@media (max-width: 767px) {
+  .wa-floating-btn { display: flex; }
+}
+
+.wa-floating-btn:active {
+  transform: scale(0.9);
+}
+
+.wa-floating-btn:hover {
+  transform: scale(1.1);
+  background-color: #20ba5a;
+}
+
 ::selection { background: #e7e5e4; }
