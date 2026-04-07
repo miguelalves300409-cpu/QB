@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     /* 1. Animação de Entrada (Intro / Hero Reveal) */
