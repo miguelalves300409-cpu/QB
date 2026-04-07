@@ -40,11 +40,18 @@ function initApp() {
         }
     }, { passive: true });
 
-    /* ── 2. IMAGE SEQUENCE —  usa apenas 1 em cada 2 frames (20 JPEGs)
-       Mantém animação suave a ~20fps, corta 50% do download         ── */
+    /* ── 2. IMAGE SEQUENCE — desktop only
+       Mobile: mostra apenas o frame estático, sem carregar 20 JPEGs.
+       Isso economiza ~500KB e ~500ms de decode no mobile.         ── */
+    const IS_MOBILE = window.innerWidth < 768;
     const canvas = document.getElementById("hero-canvas");
     const context = canvas.getContext("2d");
 
+    // Em mobile: apenas deixa o hero-lcp visível, sem animação de frames
+    if (IS_MOBILE) {
+        // Escond canvas (o hero-lcp já mostra o frame estático)
+        canvas.style.display = 'none';
+    } else {
     // Frames disponíveis: 001, 003, 005 … 039 (20 frames)
     const TOTAL_FRAMES = 20;
     const frameIndex = i => String(i * 2 - 1).padStart(3, '0'); // 001,003,005…
@@ -140,6 +147,7 @@ function initApp() {
     requestAnimationFrame(() => {
         canvas.style.transform = 'translateZ(0)';
     });
+    } // fim if(!IS_MOBILE)
 
     /* ── 3. Parallax saída do hero text ── */
     gsap.to([".hero-headline", ".sub-headline", ".ctas"], {
