@@ -51,7 +51,7 @@ function initApp() {
     if (IS_MOBILE) {
         canvas.style.display = 'none';
     } else {
-    const TOTAL_FRAMES = 60;
+    const TOTAL_FRAMES = 51;
     const frameSrc = i => `assets/video_frames/frame-${String(i).padStart(3,'0')}.jpg`;
 
     const images = new Array(TOTAL_FRAMES).fill(null);
