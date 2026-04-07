@@ -44,8 +44,13 @@ function initApp() {
     const canvas = document.getElementById("hero-canvas");
     const context = canvas.getContext("2d");
 
-    const TOTAL_FRAMES = 96;
-    const frameSrc = i => `assets/video_frames/frame-${String(i).padStart(3,'0')}.jpg`;
+    const w = window.innerWidth;
+    const isMobile = w < 768;
+
+    // PERFORMANCE MOBILE: no telemóvel usamos metade dos frames (48) para poupar memória e RAM.
+    const TOTAL_FRAMES = isMobile ? 48 : 96;
+    const frameStep = isMobile ? 2 : 1; // pula de 2 em 2 no mobile
+    const frameSrc = i => `assets/video_frames/frame-${String(((i-1) * frameStep) + 1).padStart(3,'0')}.jpg`;
 
     const images = new Array(TOTAL_FRAMES).fill(null);
     const glassesObj = { frame: 1 };
@@ -60,11 +65,9 @@ function initApp() {
         if (!img || !img.complete || img.naturalWidth === 0) return;
         lastGoodFrame = fi;
 
-        const w = window.innerWidth, h = window.innerHeight;
-        const isMobile = w < 768;
-        
-        // No mobile limitamos o DPR para 1.5 para não travar a GPU
-        const dpr = isMobile ? 1.5 : Math.min(window.devicePixelRatio || 1, 2);
+        const h = window.innerHeight;
+        // MOBILE: DPR 1.0 para performance extrema; Desktop: DPR até 2.0
+        const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 2);
 
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
             canvas.width = w * dpr; canvas.height = h * dpr;
@@ -74,23 +77,17 @@ function initApp() {
         const sw = canvas.width / dpr, sh = canvas.height / dpr;
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.imageSmoothingEnabled = true;
-        context.imageSmoothingQuality = isMobile ? 'medium' : 'high';
+        context.imageSmoothingQuality = isMobile ? 'low' : 'high'; // low no mobile = mais rápido
         context.clearRect(0, 0, sw, sh);
 
         const iW = img.naturalWidth, iH = img.naturalHeight;
         
         if (isMobile) {
-            // ROTAÇÃO MOBILE: gira 90 graus para usar o ecrã vertical (9:16)
-            context.save();
-            context.translate(sw / 2, sh / 2);
-            context.rotate(Math.PI / 2);
-            
-            // Escala para preencher a altura (que vira largura após rotação) corretamente no mobile
+            context.save(); context.translate(sw / 2, sh / 2); context.rotate(Math.PI / 2);
             const s = (sh / iW) * 0.95; 
             context.drawImage(img, -(iW * s) / 2, -(iH * s) / 2, iW * s, iH * s);
             context.restore();
         } else {
-            // DESKTOP: horizontal padrão
             const r = iW / iH, cr = sw / sh;
             const dW = cr > r ? sw : sh * r;
             const dH = cr > r ? sw / r : sh;
@@ -98,15 +95,15 @@ function initApp() {
         }
     }
 
-    // Frame 1 — carregado imediatamente (preloaded no <head>)
+    // Frame 1 
     const f1 = new Image();
     f1.src = frameSrc(1);
     f1.onload = () => { images[0] = f1; render(); };
     images[0] = f1;
 
-    // Frames 2–12: carregam em alta prioridade logo após frame 1
-    // (frames iniciais, visíveis antes do usuário rolar)
-    for (let i = 2; i <= 12; i++) {
+    // Carregamento inteligente de frames
+    const highPriCount = isMobile ? 12 : 24; // quantos frames carregar logo
+    for (let i = 2; i <= highPriCount; i++) {
         const img = new Image();
         img.src = frameSrc(i);
         img.onload = () => {
@@ -115,7 +112,7 @@ function initApp() {
         };
     }
 
-    // Frames 13–60: carregam progressivamente via requestIdleCallback
+    // Frames restantes via requestIdleCallback
     const loadRemainingFrames = (start) => {
         if (start > TOTAL_FRAMES) return;
         const img = new Image();
@@ -124,13 +121,14 @@ function initApp() {
             images[start - 1] = img;
             if (Math.round(glassesObj.frame) === start) render();
         };
+        const idleTimeout = isMobile ? 800 : 500; // mais pausa no mobile para não aquecer
         if (typeof requestIdleCallback !== 'undefined') {
-            requestIdleCallback(() => loadRemainingFrames(start + 1), { timeout: 500 });
+            requestIdleCallback(() => loadRemainingFrames(start + 1), { timeout: idleTimeout });
         } else {
-            setTimeout(() => loadRemainingFrames(start + 1), 20);
+            setTimeout(() => loadRemainingFrames(start + 1), isMobile ? 100 : 20);
         }
     };
-    loadRemainingFrames(13);
+    loadRemainingFrames(highPriCount + 1);
 
     let resizeTimer;
     window.addEventListener('resize', () => {
