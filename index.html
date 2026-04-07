@@ -19,12 +19,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Iconify -->
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" defer></script>
 
-    <!-- GSAP & ScrollTrigger -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Preload crítico: primeiro frame do hero (melhora LCP) -->
+    <link rel="preload" as="image" href="assets/video_frames/ezgif-frame-001.jpg" fetchpriority="high">
 
     <script>
         tailwind.config = {
@@ -96,18 +94,18 @@
             
             <!-- Grupo de Ãcones com EspaÃ§amento Rigoroso -->
             <div class="flex items-center gap-1.5 md:gap-2">
-                <a href="https://wa.me/message/FV37UMP6GFRWL1" id="main-wa-concierge" target="_blank" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:text-green-500 transition-all hidden md:flex">
+                <a href="https://wa.me/message/FV37UMP6GFRWL1" id="main-wa-concierge" target="_blank" aria-label="Contato via WhatsApp" rel="noopener noreferrer" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:text-green-500 transition-all hidden md:flex">
                     <iconify-icon icon="ic:baseline-whatsapp" class="text-[20px]"></iconify-icon>
                 </a>
-                <button id="header-search-btn" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:scale-110 transition-all">
+                <button id="header-search-btn" aria-label="Pesquisar produtos" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:scale-110 transition-all">
                     <iconify-icon icon="solar:magnifer-linear" class="text-[20px]"></iconify-icon>
                 </button>
-                <button id="header-user-btn" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:scale-110 transition-all">
+                <button id="header-user-btn" aria-label="Minha conta" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:scale-110 transition-all">
                     <iconify-icon icon="solar:user-circle-linear" class="text-[22px]"></iconify-icon>
                 </button>
-                <button id="header-cart-btn" class="w-8 h-8 flex items-center justify-center relative text-stone-900 hover:scale-110 transition-all">
+                <button id="header-cart-btn" aria-label="Ver carrinho" class="w-8 h-8 flex items-center justify-center relative text-stone-900 hover:scale-110 transition-all">
                     <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-[20px]"></iconify-icon>
-                    <span class="absolute top-1 right-0 bg-stone-900 text-white text-[7px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full leading-none cart-count" id="cart-count">0</span>
+                    <span aria-live="polite" aria-label="Itens no carrinho" class="absolute top-1 right-0 bg-stone-900 text-white text-[7px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full leading-none cart-count" id="cart-count">0</span>
                 </button>
             </div>
         </div>
@@ -117,8 +115,8 @@
     <div id="search-overlay" class="fixed top-0 left-0 w-full min-h-32 max-h-[85vh] bg-white z-[120] transform -translate-y-full transition-all duration-500 overflow-y-auto border-b border-stone-100 shadow-2xl flex flex-col items-center">
         <div class="w-full h-32 flex items-center px-12 gap-6 bg-white shrink-0">
             <iconify-icon icon="solar:magnifer-linear" class="text-2xl text-stone-300"></iconify-icon>
-            <input type="text" id="search-input" placeholder="Pesquisar óculos (ex: Ibiza, Capri, Maldives...)" class="w-full text-xl font-light outline-none border-none placeholder:text-stone-100">
-            <button id="close-search" class="text-stone-900 hover:scale-110 transition-transform p-4">
+            <input type="text" id="search-input" aria-label="Pesquisar produtos" placeholder="Pesquisar óculos (ex: Ibiza, Capri, Maldives...)" class="w-full text-xl font-light outline-none border-none placeholder:text-stone-100">
+            <button id="close-search" aria-label="Fechar pesquisa" class="text-stone-900 hover:scale-110 transition-transform p-4">
                 <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
             </button>
         </div>
@@ -138,7 +136,7 @@
 
             <!-- Centro/Direita: MÃ­dia Principal -->
             <div class="video-container" id="video-container">
-                <canvas id="hero-canvas" class="hero-video"></canvas>
+                <canvas id="hero-canvas" role="img" aria-label="Animação do produto QB Oficial" class="hero-video"></canvas>
             </div>
 
             <!-- Left/Extrema Direita Layout -->
@@ -219,7 +217,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/tech_glasses.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/tech_glasses.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">UV400 PROTECT â€¢ GRADE 5 TITANIUM</span>
             </article>
@@ -240,7 +238,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/white_glasses.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/white_glasses.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">HIGH-GLOSS POLYMER â€¢ CERAMIC CORE</span>
             </article>
@@ -261,7 +259,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2003.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2003.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">24K GOLD LAYER â€¢ POLARIZED G15</span>
             </article>
@@ -282,7 +280,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2004.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2004.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">MATTE NOIR FINISH â€¢ SUPER-LIGHT</span>
             </article>
@@ -304,7 +302,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2005.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2005.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">POLARIZED LENSES â€¢ TR90 FLEX</span>
             </article>
@@ -325,7 +323,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2006.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2006.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">HIGH-REFLECTIVE COAT â€¢ CARBON TEMPLES</span>
             </article>
@@ -346,7 +344,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2007.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2007.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">RUBY CRYSTAL LENSES â€¢ HANDMADE</span>
             </article>
@@ -367,7 +365,7 @@
                 </div>
                 <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2008.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2008.png" loading="lazy" decoding="async" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
                 </div>
                 <span class="tech-spec-label">NIGHT-VISION TECH â€¢ SCRATCH RESISTANT</span>
             </article>
@@ -405,7 +403,7 @@
                 </div>
                 <div class="relative product-elem">
                     <div class="aspect-[4/5] rounded-[3rem] overflow-hidden bg-stone-800 perspective-wrapper">
-                        <img src="assets/img/tech_glasses.png" class="w-full h-full object-contain grayscale opacity-60 hover:opacity-100 transition-all duration-1000">
+                        <img src="assets/img/tech_glasses.png" loading="lazy" decoding="async" class="w-full h-full object-contain grayscale opacity-60 hover:opacity-100 transition-all duration-1000">
                     </div>
                     <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-[#fdfcf0] p-8 rounded-full flex items-center justify-center text-center shadow-2xl">
                         <span class="text-black text-[9px] font-mono font-bold tracking-widest uppercase">Handmade Precision</span>
@@ -427,13 +425,13 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="aspect-[3/4] rounded-3xl overflow-hidden bg-stone-100 product-elem group">
-                    <img src="assets/img/produto 03.png" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
+                    <img src="assets/img/produto 03.png" loading="lazy" decoding="async" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
                 </div>
                 <div class="aspect-[3/4] rounded-3xl overflow-hidden bg-stone-100 product-elem group mt-12 md:mt-24">
-                    <img src="assets/img/produto 04.png" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
+                    <img src="assets/img/produto 04.png" loading="lazy" decoding="async" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
                 </div>
                 <div class="aspect-[3/4] rounded-3xl overflow-hidden bg-stone-100 product-elem group">
-                    <img src="assets/img/produto 05.png" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
+                    <img src="assets/img/produto 05.png" loading="lazy" decoding="async" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
                 </div>
             </div>
         </div>
@@ -522,10 +520,10 @@
 
     <!-- IdentificaÃ§Ã£o Drawer -->
     <div class="cart-overlay" id="user-overlay"></div>
-    <div class="cart-drawer" id="user-drawer">
+    <div class="cart-drawer" id="user-drawer" role="dialog" aria-modal="true" aria-label="Painel de Identificação">
         <div class="cart-header">
             <h3 class="text-xl font-display font-bold tracking-tight">Identificação</h3>
-            <button id="close-user" class="text-stone-400 hover:text-stone-900 transition-colors">
+            <button id="close-user" aria-label="Fechar painel de conta" class="text-stone-400 hover:text-stone-900 transition-colors">
                 <iconify-icon icon="solar:close-circle-linear" class="text-3xl"></iconify-icon>
             </button>
         </div>
@@ -537,12 +535,12 @@
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">E-mail</label>
-                        <input type="email" placeholder="nome@exemplo.com" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
+                        <label for="login-email" class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">E-mail</label>
+                        <input id="login-email" type="email" placeholder="nome@exemplo.com" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">Senha</label>
-                        <input type="password" placeholder="********" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
+                        <label for="login-password" class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">Senha</label>
+                        <input id="login-password" type="password" placeholder="********" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
                     </div>
                     <button id="mock-login-btn" class="w-full bg-stone-900 text-white py-5 rounded-full font-bold tracking-widest uppercase text-[10px] hover:bg-black transition-all shadow-xl mt-4">
                         Entrar na Conta
@@ -623,10 +621,10 @@
 
     <!-- Cart Overlay & Drawer -->
     <div class="cart-overlay" id="cart-overlay"></div>
-    <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-label="Carrinho de compras">
         <div class="cart-header">
             <h3 class="text-xl font-display font-bold tracking-tight">Seu Carrinho</h3>
-            <button id="close-cart" class="text-stone-400 hover:text-stone-900 transition-colors">
+            <button id="close-cart" aria-label="Fechar carrinho" class="text-stone-400 hover:text-stone-900 transition-colors">
                 <iconify-icon icon="solar:close-circle-linear" class="text-3xl"></iconify-icon>
             </button>
         </div>
@@ -670,10 +668,10 @@
 
     <!-- 8.0 PRODUCT DETAILS DRAWER (Quick View) -->
     <div id="product-overlay" class="cart-overlay"></div>
-    <div id="product-drawer" class="cart-drawer bg-white/98 w-full max-w-[500px]">
+    <div id="product-drawer" class="cart-drawer bg-white/98 w-full max-w-[500px]" role="dialog" aria-modal="true" aria-label="Detalhes do produto">
         <div class="cart-header border-none pt-12">
             <h2 class="text-3xl font-display font-bold tracking-tight text-stone-900">Detalhes</h2>
-            <button id="close-product" class="w-10 h-10 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:rotate-90 transition-all duration-300">
+            <button id="close-product" aria-label="Fechar detalhes do produto" class="w-10 h-10 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:rotate-90 transition-all duration-300">
                 <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
             </button>
         </div>
@@ -726,6 +724,10 @@
         </div>
     </div>
 
+    <!-- GSAP & Plugins (no final do body para não bloquear renderização) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <!-- Main JS -->
     <script src="assets/js/main.js"></script>
 </body>

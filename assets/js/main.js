@@ -55,29 +55,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const frameCount = 40; // Total de frames na pasta
     const currentFrame = index => `assets/video_frames/ezgif-frame-${String(index).padStart(3, '0')}.jpg`;
-    const images = [];
+    const images = new Array(frameCount).fill(null);
     const glassesObj = { frame: 1 };
 
-    for (let i = 1; i <= frameCount; i++) {
-        const img = new Image();
-        img.src = currentFrame(i);
-        images.push(img);
-    }
-
     let loadedCount = 0;
-    images.forEach((img, i) => {
-        const triggerRender = () => {
-            loadedCount++;
-            if (i === 0) render();
-            if (loadedCount === frameCount) render();
-        };
 
-        if (img.complete) {
-            triggerRender();
-        } else {
-            img.onload = triggerRender;
+    // Carrega frames 2-40 em paralelo (chamado após frame 1 estar pronto)
+    const loadRemainingFrames = () => {
+        for (let i = 2; i <= frameCount; i++) {
+            const img = new Image();
+            img.onload = () => { loadedCount++; };
+            img.src = currentFrame(i);
+            images[i - 1] = img;
         }
-    });
+    };
+
+    // Frame 1: carrega com prioridade máxima (crítico para o LCP)
+    const firstImg = new Image();
+    firstImg.fetchPriority = 'high';
+    firstImg.src = currentFrame(1);
+    images[0] = firstImg;
+
+    if (firstImg.complete && firstImg.naturalWidth > 0) {
+        loadedCount++;
+        render();
+        if (window.requestIdleCallback) {
+            requestIdleCallback(loadRemainingFrames, { timeout: 2000 });
+        } else {
+            setTimeout(loadRemainingFrames, 200);
+        }
+    } else {
+        firstImg.onload = () => {
+            loadedCount++;
+            render();
+            if (window.requestIdleCallback) {
+                requestIdleCallback(loadRemainingFrames, { timeout: 2000 });
+            } else {
+                setTimeout(loadRemainingFrames, 200);
+            }
+        };
+    }
 
     let lastLoadedFrameIndex = 0;
     function render() {
