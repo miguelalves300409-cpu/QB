@@ -40,17 +40,10 @@ function initApp() {
         }
     }, { passive: true });
 
-    /* ── 2. IMAGE SEQUENCE — desktop only
-       Mobile: mostra apenas o frame estático, sem animação de frames.
-       60 frames de alta qualidade extraídos do vídeo original (7.5fps de 8s). ── */
-    const IS_MOBILE = window.innerWidth < 768;
+    /* ── 2. IMAGE SEQUENCE — Desktop & Mobile ── */
     const canvas = document.getElementById("hero-canvas");
     const context = canvas.getContext("2d");
 
-    // Em mobile: apenas deixa o hero-lcp visível, sem animação de frames
-    if (IS_MOBILE) {
-        canvas.style.display = 'none';
-    } else {
     const TOTAL_FRAMES = 96;
     const frameSrc = i => `assets/video_frames/frame-${String(i).padStart(3,'0')}.jpg`;
 
@@ -67,8 +60,11 @@ function initApp() {
         if (!img || !img.complete || img.naturalWidth === 0) return;
         lastGoodFrame = fi;
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap DPR at 2 para performance
         const w = window.innerWidth, h = window.innerHeight;
+        const isMobile = w < 768;
+        
+        // No mobile limitamos o DPR para 1.5 para não travar a GPU
+        const dpr = isMobile ? 1.5 : Math.min(window.devicePixelRatio || 1, 2);
 
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
             canvas.width = w * dpr; canvas.height = h * dpr;
@@ -78,12 +74,24 @@ function initApp() {
         const sw = canvas.width / dpr, sh = canvas.height / dpr;
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.imageSmoothingEnabled = true;
-        context.imageSmoothingQuality = 'high';
+        context.imageSmoothingQuality = isMobile ? 'medium' : 'high';
         context.clearRect(0, 0, sw, sh);
 
         const iW = img.naturalWidth, iH = img.naturalHeight;
+        
+        // Lógica de escala centralizada (tipo "contain/cover" inteligente)
         const r = iW / iH, cr = sw / sh;
-        const dW = cr > r ? sw : sh * r, dH = cr > r ? sw / r : sh;
+        let dW, dH;
+        
+        if (isMobile) {
+            // No mobile damos um zoom extra de 1.2x para o óculos ficar imponente
+            dW = (cr > r ? sw : sh * r) * 1.2;
+            dH = (cr > r ? sw / r : sh) * 1.2;
+        } else {
+            dW = cr > r ? sw : sh * r;
+            dH = cr > r ? sw / r : sh;
+        }
+        
         context.drawImage(img, (sw - dW) / 2, (sh - dH) / 2, dW, dH);
     }
 
@@ -145,7 +153,6 @@ function initApp() {
     requestAnimationFrame(() => {
         canvas.style.transform = 'translateZ(0)';
     });
-    } // fim if(!IS_MOBILE)
 
     /* ── 3. Parallax saída do hero text ── */
     gsap.to([".hero-headline", ".sub-headline", ".ctas"], {
