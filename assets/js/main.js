@@ -76,23 +76,27 @@ document.addEventListener("DOMContentLoaded", () => {
     firstImg.src = currentFrame(1);
     images[0] = firstImg;
 
+    const startLoadingRemaining = () => {
+        if (window.requestIdleCallback) {
+            requestIdleCallback(loadRemainingFrames);
+        } else {
+            setTimeout(loadRemainingFrames, 50);
+        }
+    };
+
     if (firstImg.complete && firstImg.naturalWidth > 0) {
         loadedCount++;
         render();
-        if (window.requestIdleCallback) {
-            requestIdleCallback(loadRemainingFrames, { timeout: 2000 });
-        } else {
-            setTimeout(loadRemainingFrames, 200);
-        }
+        startLoadingRemaining();
     } else {
         firstImg.onload = () => {
             loadedCount++;
             render();
-            if (window.requestIdleCallback) {
-                requestIdleCallback(loadRemainingFrames, { timeout: 2000 });
-            } else {
-                setTimeout(loadRemainingFrames, 200);
-            }
+            startLoadingRemaining();
+        };
+        firstImg.onerror = () => {
+            console.error("Hero frame 1 failed to load. Path: " + firstImg.src);
+            startLoadingRemaining();
         };
     }
 
