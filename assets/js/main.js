@@ -85,8 +85,8 @@ function initApp() {
             context.translate(sw / 2, sh / 2);
             context.rotate(Math.PI / 2);
             
-            // Escala para preencher a altura (que vira largura após rotação)
-            const s = Math.max(sh / iW, sw / iH) * 0.95; // 0.95 para pequena margem
+            // Escala para preencher a altura (que vira largura após rotação) corretamente no mobile
+            const s = (sh / iW) * 0.95; 
             context.drawImage(img, -(iW * s) / 2, -(iH * s) / 2, iW * s, iH * s);
             context.restore();
         } else {

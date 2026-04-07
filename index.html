@@ -159,7 +159,9 @@
                 var iW = img.naturalWidth, iH = img.naturalHeight;
                 if (isMobile) {
                     ctx.save(); ctx.translate(w/2, h/2); ctx.rotate(Math.PI/2);
-                    var s = Math.max(h/iW, w/iH);
+                    // Rotação: largura vira altura, altura vira largura.
+                    // Para preencher tela vertical: a imagem horizontal deve ser escalada pela (altura da tela / largura da imagem)
+                    var s = (h / iW) * 0.95; 
                     ctx.drawImage(img, -(iW*s)/2, -(iH*s)/2, iW*s, iH*s);
                     ctx.restore();
                 } else {
