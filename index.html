@@ -6,728 +6,698 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>QB OFICIAL | Luxury Tech Eyewear</title>
 
-    <!-- SEO Meta Tags -->
+    <!-- SEO -->
     <meta name="description" content="Descubra a união perfeita entre o luxo minimalista e a clareza óptica sem precedentes. Lentes adaptativas em titânio aeroespacial.">
-    <meta name="keywords" content="óculos, luxo, minimalismo, tecnologia, lentes adaptativas">
+    <meta property="og:title" content="QB OFICIAL | Luxury Tech Eyewear">
+    <meta property="og:description" content="A visão absoluta para todos.">
+    <meta property="og:type" content="website">
 
-    <!-- Fonts -->
+    <!-- Preconnect apenas para o que realmente usamos no caminho crítico -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Preload: frame-001 e CSS crítico primeiro -->
+    <link rel="preload" href="assets/video_frames/ezgif-frame-001.jpg" as="image" fetchpriority="high">
+    <link rel="preload" href="assets/css/main.css" as="style">
 
-    <!-- Iconify -->
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <!-- Fontes: apenas 2 famílias, pesos mínimos.
+         JetBrains Mono substituído por monospace do sistema.
+         Space Grotesk substituído por Inter Bold. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 
-    <!-- GSAP & ScrollTrigger -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- CSS crítico inline: elimina render block no above-the-fold -->
+    <style>
+        /* ── Reset mínimo ── */
+        *,*::before,*::after{box-sizing:border-box}
+        body{margin:0;padding:0;font-family:'Inter',sans-serif;background:#fdfcf0;color:#1c1917;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+        ::selection{background:#e7e5e4}
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                    },
-                    colors: {
-                        stone: {
-                            50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1',
-                            400: '#a8a29e', 500: '#78716c', 800: '#292524', 900: '#1c1917',
-                        },
-                        surface: '#FFFFFF',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Custom Styles -->
+        /* ── Header acima do fold ── */
+        .site-header{position:fixed;top:0;left:0;width:100%;height:5rem;background:rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid #f5f5f4;z-index:100;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;transition:height .3s ease,background .3s ease}
+        @media(min-width:768px){.site-header{height:6rem;padding:0 3rem}}
+        .site-header.scrolled{height:4.375rem!important;background:rgba(255,255,255,.75)!important;backdrop-filter:blur(30px) saturate(180%)!important;border-bottom-color:rgba(0,0,0,.08)!important}
+        .header-left{flex:1;display:flex;align-items:center}
+        .logo-img{height:2rem;width:auto;mix-blend-mode:multiply;opacity:.9}
+        @media(min-width:768px){.logo-img{height:2.5rem}}
+        .header-nav{display:none}
+        @media(min-width:1024px){.header-nav{display:flex;align-items:center}}
+        .nav-link{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3em;color:#1c1917;text-decoration:none;white-space:nowrap}
+        .header-actions{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:.5rem}
+        .header-icons{display:flex;align-items:center;gap:.375rem}
+        .icon-btn{width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:#1c1917;padding:0;transition:transform .3s ease}
+        .wa-btn{display:none}
+        @media(min-width:768px){.wa-btn{display:flex}}
+        .cart-btn{position:relative}
+        .cart-count{position:absolute;top:-2px;right:-2px;background:#1c1917;color:#fff;font-size:7px;font-weight:700;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+
+        /* ── Hero acima do fold ── */
+        .hero-section{height:400vh;position:relative}
+        .hero-sticky{position:sticky;top:0;height:100vh;display:flex;align-items:center;overflow:hidden;width:100%}
+
+        /* LCP: imagem estática visível ANTES do JS carregar */
+        .hero-lcp{position:absolute;inset:0;z-index:4;width:100%;height:100%;overflow:hidden;mix-blend-mode:multiply;filter:contrast(1.1) saturate(1.1) brightness(.98);pointer-events:none}
+        .hero-lcp img{width:100%;height:100%;object-fit:cover;object-position:center}
+        @media(max-width:767px){.hero-lcp img{object-position:70% center}}
+
+        /* Canvas fica em cima da imagem static depois que JS carrega */
+        .video-container{position:absolute;inset:0;width:100vw;height:100vh;height:100dvh;z-index:5;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden;mix-blend-mode:multiply;filter:contrast(1.1) saturate(1.1) brightness(.98);opacity:0;transition:opacity .3s ease}
+        .hero-video{width:100%;height:100%;display:block}
+
+        /* Hero texto */
+        .hero-layout{width:100%;height:100%;max-width:1440px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:20;pointer-events:none}
+        .hero-text-block{position:absolute;top:6rem;left:2rem;display:flex;flex-direction:column;align-items:flex-start;text-align:left;pointer-events:auto}
+        @media(min-width:768px){.hero-text-block{position:static;width:45%;margin-left:-3rem}}
+        @media(min-width:1024px){.hero-text-block{margin-left:-10rem}}
+        .hero-headline{font-size:2.6rem;font-family:'Instrument Serif',serif;font-weight:700;line-height:.8;letter-spacing:-.03em;color:#1c1917;margin-bottom:1rem;display:flex;flex-direction:column;align-items:flex-start;gap:.25rem}
+        @media(min-width:640px){.hero-headline{font-size:3.75rem}}
+        @media(min-width:768px){.hero-headline{font-size:5rem}}
+        @media(min-width:1024px){.hero-headline{font-size:7.5rem}}
+        .text-outline{-webkit-text-stroke:1.5px #1c1917;color:transparent}
+        .text-reveal-wrapper{overflow:hidden;display:inline-block;vertical-align:bottom;padding-bottom:5px;padding-right:5px}
+        .text-reveal-content{transform:translateY(110%);opacity:0;display:inline-block;will-change:transform,opacity}
+        .hero-sub{font-size:12px;color:#78716c;max-width:240px;font-weight:300;line-height:1.6;margin-bottom:2rem;opacity:0;transform:translateY(20px)}
+        @media(min-width:768px){.hero-sub{font-size:1rem;max-width:24rem}}
+        .fade-in-up{opacity:0;transform:translateY(30px);will-change:transform,opacity}
+        .ambient-glow{position:absolute;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,255,255,.7) 0%,transparent 60%);filter:blur(60px);border-radius:50%;pointer-events:none;z-index:0;right:0;top:50%;transform:translateY(-50%);opacity:.8;mix-blend-mode:overlay}
+
+        /* Oculta elementos que serão animados pelo GSAP para evitar flash */
+        .hidden-mobile{display:none}
+    </style>
+
+    <!-- CSS principal e design system -->
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/tailwind-static.css">
 
+    <!-- Firebase — modular, não bloqueia nada -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
       import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
       import { getFirestore, doc, getDoc, updateDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-      
       const firebaseConfig = {
-        apiKey: "AIzaSyDuilYNLCH21KZPbryMY-ZYPPjNgUxOfyE",
-        authDomain: "qb-oficial.firebaseapp.com",
-        projectId: "qb-oficial",
-        storageBucket: "qb-oficial.firebasestorage.app",
-        messagingSenderId: "123203227653",
-        appId: "1:123203227653:web:cfd9fb640ff9397ef84c6c",
-        measurementId: "G-3PPN51D6WT"
+        apiKey:"AIzaSyDuilYNLCH21KZPbryMY-ZYPPjNgUxOfyE",authDomain:"qb-oficial.firebaseapp.com",
+        projectId:"qb-oficial",storageBucket:"qb-oficial.firebasestorage.app",
+        messagingSenderId:"123203227653",appId:"1:123203227653:web:cfd9fb640ff9397ef84c6c"
       };
-
       const app = initializeApp(firebaseConfig);
       window.qbAuth = getAuth(app);
       window.qbAuthMethods = { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut };
       window.qbDB = getFirestore(app);
       window.qbDBMethods = { doc, getDoc, updateDoc, setDoc, onSnapshot };
     </script>
-    <!-- Vercel Reforce Deployment -->
+
+    <!-- Script inline crítico: renderiza frame-001 NO CANVAS imediatamente,
+         sem esperar GSAP. Isso fixa o LCP. -->
+    <script>
+    (function() {
+        // Executa assim que a tag <canvas> estiver disponível
+        function initFirstFrame() {
+            var canvas = document.getElementById('hero-canvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var img = new Image();
+            img.onload = function() {
+                var dpr = window.devicePixelRatio || 1;
+                var w = window.innerWidth, h = window.innerHeight;
+                canvas.width = w * dpr; canvas.height = h * dpr;
+                canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                var isMobile = w < 768;
+                var iW = img.naturalWidth, iH = img.naturalHeight;
+                if (isMobile) {
+                    ctx.save(); ctx.translate(w/2, h/2); ctx.rotate(Math.PI/2);
+                    var s = Math.max(h/iW, w/iH);
+                    ctx.drawImage(img, -(iW*s)/2, -(iH*s)/2, iW*s, iH*s);
+                    ctx.restore();
+                } else {
+                    var r = iW/iH, cr = w/h;
+                    var dW, dH, dX, dY;
+                    if (cr > r) { dW=w; dH=w/r; dX=0; dY=(h-dH)/2; }
+                    else { dH=h; dW=h*r; dX=(w-dW)/2; dY=0; }
+                    ctx.drawImage(img, dX, dY, dW, dH);
+                }
+                // Mostra canvas, esconde img estática (apenas depois do canvas estar pronto)
+                var vc = document.getElementById('video-container');
+                if (vc) vc.style.opacity = '1';
+                var lcp = document.getElementById('hero-lcp');
+                if (lcp) lcp.style.opacity = '0';
+                window._heroFirstFrameLoaded = true;
+            };
+            img.src = 'assets/video_frames/ezgif-frame-001.jpg';
+        }
+        // Tenta agora; se DOM não estiver pronto, espera
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFirstFrame);
+        } else {
+            initFirstFrame();
+        }
+    })();
+    </script>
 </head>
 
-<body class="bg-[#fdfcf0] text-black antialiased overflow-x-hidden selection:bg-stone-200">
+<body>
 
-    <!-- Header Estilo Editorial (Top Bar) -->
-    <header class="fixed top-0 left-0 w-full h-20 md:h-24 bg-white/90 backdrop-blur-xl border-b border-stone-100 z-[100] px-8 md:px-12 flex items-center header-entrance">
-        <!-- Lado Esquerdo (Logo) -->
-        <div class="flex-1 flex items-center">
-            <a href="index.html" class="flex-shrink-0">
-                <img src="assets/img/logo.png" alt="Logo QB" class="h-8 md:h-10 w-auto mix-blend-multiply opacity-90 transition-all hover:opacity-100">
+    <!-- Header -->
+    <header class="site-header" id="site-header">
+        <div class="header-left">
+            <a href="index.html" class="logo-link">
+                <img src="assets/img/logo.png" alt="Logo QB Oficial" class="logo-img" width="120" height="40">
             </a>
         </div>
-
-        <!-- Menu Absolutamente Central (Desktop) -->
-        <nav class="hidden lg:flex items-center justify-center flex-initial">
-            <a href="#dobra-2" class="text-[9px] font-bold uppercase tracking-[0.3em] text-stone-900 hover:text-stone-400 transition-all scroll-link whitespace-nowrap">Óculos de Sol</a>
+        <nav class="header-nav" aria-label="Menu principal">
+            <a href="#collection" class="nav-link scroll-link">Óculos de Sol</a>
         </nav>
-
-        <!-- Lado Direito (AÃ§Ãµes) -->
-        <div class="flex-1 flex items-center justify-end gap-1 px-1">
-            <span id="user-name-header" class="user-name-label hidden xl:block opacity-0 -translate-x-2 transition-all duration-500 mr-2">Log In</span>
-            
-            <!-- Grupo de Ãcones com EspaÃ§amento Rigoroso -->
-            <div class="flex items-center gap-1.5 md:gap-2">
-                <a href="https://wa.me/message/FV37UMP6GFRWL1" id="main-wa-concierge" target="_blank" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:text-green-500 transition-all hidden md:flex">
-                    <iconify-icon icon="ic:baseline-whatsapp" class="text-[20px]"></iconify-icon>
+        <div class="header-actions">
+            <span id="user-name-header" class="user-name-label hidden-mobile" aria-live="polite">Log In</span>
+            <div class="header-icons">
+                <a href="https://wa.me/message/FV37UMP6GFRWL1" id="main-wa-concierge" target="_blank" rel="noopener noreferrer" class="icon-btn wa-btn" aria-label="WhatsApp Concierge">
+                    <iconify-icon icon="ic:baseline-whatsapp" width="20"></iconify-icon>
                 </a>
-                <button id="header-search-btn" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:scale-110 transition-all">
-                    <iconify-icon icon="solar:magnifer-linear" class="text-[20px]"></iconify-icon>
+                <button id="header-search-btn" class="icon-btn" aria-label="Buscar produtos">
+                    <iconify-icon icon="solar:magnifer-linear" width="20"></iconify-icon>
                 </button>
-                <button id="header-user-btn" class="w-8 h-8 flex items-center justify-center text-stone-900 hover:scale-110 transition-all">
-                    <iconify-icon icon="solar:user-circle-linear" class="text-[22px]"></iconify-icon>
+                <button id="header-user-btn" class="icon-btn" aria-label="Conta do usuário">
+                    <iconify-icon icon="solar:user-circle-linear" width="22"></iconify-icon>
                 </button>
-                <button id="header-cart-btn" class="w-8 h-8 flex items-center justify-center relative text-stone-900 hover:scale-110 transition-all">
-                    <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-[20px]"></iconify-icon>
-                    <span class="absolute top-1 right-0 bg-stone-900 text-white text-[7px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full leading-none cart-count" id="cart-count">0</span>
+                <button id="header-cart-btn" class="icon-btn cart-btn" aria-label="Carrinho">
+                    <iconify-icon icon="solar:cart-large-minimalistic-linear" width="20"></iconify-icon>
+                    <span class="cart-count" id="cart-count" aria-label="Itens no carrinho">0</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Search Overlay -->
-    <div id="search-overlay" class="fixed top-0 left-0 w-full min-h-32 max-h-[85vh] bg-white z-[120] transform -translate-y-full transition-all duration-500 overflow-y-auto border-b border-stone-100 shadow-2xl flex flex-col items-center">
-        <div class="w-full h-32 flex items-center px-12 gap-6 bg-white shrink-0">
-            <iconify-icon icon="solar:magnifer-linear" class="text-2xl text-stone-300"></iconify-icon>
-            <input type="text" id="search-input" placeholder="Pesquisar óculos (ex: Ibiza, Capri, Maldives...)" class="w-full text-xl font-light outline-none border-none placeholder:text-stone-100">
-            <button id="close-search" class="text-stone-900 hover:scale-110 transition-transform p-4">
-                <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
+    <div id="search-overlay" class="search-overlay" role="search" aria-label="Pesquisa de produtos">
+        <div class="search-bar">
+            <iconify-icon icon="solar:magnifer-linear" class="search-icon" aria-hidden="true"></iconify-icon>
+            <input type="search" id="search-input" placeholder="Pesquisar óculos (ex: Ibiza, Capri, Maldives...)" class="search-input" autocomplete="off">
+            <button id="close-search" class="icon-btn" aria-label="Fechar busca">
+                <iconify-icon icon="solar:close-circle-linear" width="24"></iconify-icon>
             </button>
         </div>
-        
-        <!-- Live Results -->
-        <div id="search-results-container" class="w-full px-12 pb-12 hidden">
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 mb-8 font-mono">Resultados Encontrados</p>
-            <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                <!-- Injected via JS -->
-            </div>
+        <div id="search-results-container" class="search-results hidden">
+            <p class="search-results-label">Resultados Encontrados</p>
+            <div id="search-results-grid" class="search-results-grid"></div>
         </div>
     </div>
 
-    <main class="h-[400vh] relative" id="hero">
+    <main class="hero-section" id="hero">
         <div class="hero-sticky">
             <div class="ambient-glow"></div>
 
-            <!-- Centro/Direita: MÃ­dia Principal -->
-            <div class="video-container" id="video-container">
-                <canvas id="hero-canvas" class="hero-video"></canvas>
+            <!-- ★ IMAGEM ESTÁTICA: visível IMEDIATAMENTE como LCP →
+                 aparece antes do JS. O canvas substitui quando pronto. -->
+            <div id="hero-lcp" class="hero-lcp" aria-hidden="true">
+                <img
+                    src="assets/video_frames/ezgif-frame-001.jpg"
+                    alt=""
+                    fetchpriority="high"
+                    decoding="sync"
+                    width="1920" height="1080"
+                >
             </div>
 
-            <!-- Left/Extrema Direita Layout -->
-            <div class="w-full h-full max-w-[1440px] mx-auto px-8 md:px-8 lg:px-2 flex justify-between items-center relative z-20 pointer-events-none">
+            <!-- Canvas: começa opacity:0, torna-se visível via script inline acima -->
+            <div class="video-container" id="video-container">
+                <canvas id="hero-canvas" class="hero-video" aria-hidden="true"></canvas>
+            </div>
 
-                <!-- Bloco de Texto: Absoluto no topo-esquerdo no mobile, relativo no desktop -->
-                <div class="absolute top-24 left-8 md:static md:w-[45%] flex flex-col items-start text-left md:-ml-12 lg:-ml-40 pointer-events-auto">
-
-                    <!-- Headline (Mistura Sólido e Outline) -->
-                    <h1 class="text-[2.6rem] sm:text-6xl md:text-8xl lg:text-[7.5rem] font-serif font-bold leading-[0.8] tracking-tighter text-stone-900 mb-4 hero-headline flex flex-col items-start gap-1">
+            <div class="hero-layout">
+                <div class="hero-text-block">
+                    <h1 class="hero-headline">
                         <div class="text-reveal-wrapper"><span class="text-reveal-content text-solid italic">A VISÃO</span></div>
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content text-outline cursor-default font-sans tracking-normal uppercase">ABSOLUTA</span></div>
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content text-outline uppercase">ABSOLUTA</span></div>
                         <div class="text-reveal-wrapper"><span class="text-reveal-content text-solid italic">PARA TODOS.</span></div>
                     </h1>
-
-                    <!-- Subheadline -->
-                    <p class="text-[12px] md:text-base text-stone-600 max-w-[240px] md:max-w-sm font-light leading-relaxed mb-8 fade-in-up sub-headline">
+                    <p class="hero-sub fade-in-up sub-headline">
                         Descubra a união perfeita entre o luxo minimalista e a clareza óptica sem precedentes.
                     </p>
-
-                    <div class="flex flex-wrap gap-4 items-center fade-in-up ctas"></div>
+                    <div class="hero-ctas fade-in-up ctas"></div>
                 </div>
-
             </div>
         </div>
     </main>
 
-    <!-- 2.0 COLEÇÃO UNIFICADA (TODOS OS PRODUTOS) -->
-    <section id="collection" class="bg-white flex items-center justify-center py-16 md:py-24 relative overflow-hidden" style="z-index: 30;">
-
-        <!-- Brand Concept Marquee -->
-        <div class="absolute top-0 left-0 w-full overflow-hidden bg-stone-900/5 py-4 border-y border-stone-100 concept-marquee pointer-events-none overflow-hidden">
-            <div class="flex whitespace-nowrap gap-12 text-[10px] font-mono tracking-[0.4em] text-stone-300 uppercase animate-marquee">
+    <!-- 2.0 COLEÇÃO -->
+    <section id="collection" class="collection-section">
+        <div class="concept-marquee" aria-hidden="true">
+            <div class="marquee-track animate-marquee">
                 <span>ALL THE TIME &bull; QB OFICIAL &bull; ALL THE TIME &bull; QB OFICIAL &bull; ALL THE TIME &bull; QB OFICIAL &bull; ALL THE TIME &bull; QB OFICIAL &bull;</span>
                 <span>ALL THE TIME &bull; QB OFICIAL &bull; ALL THE TIME &bull; QB OFICIAL &bull; ALL THE TIME &bull; QB OFICIAL &bull; ALL THE TIME &bull; QB OFICIAL &bull;</span>
             </div>
         </div>
+        <div class="parallax-orb parallax-bg-orb" aria-hidden="true"></div>
+        <div class="parallax-orb parallax-orb-right parallax-bg-orb-3" aria-hidden="true"></div>
 
-        <!-- Orbes de Parallax Flutuantes (Tons Quentes) -->
-        <div class="absolute top-1/2 left-[10%] w-[600px] h-[600px] bg-gradient-to-br from-amber-100/40 to-transparent rounded-full blur-[100px] pointer-events-none z-0 transform -translate-y-1/2 parallax-bg-orb"></div>
-        <div class="absolute top-1/2 right-[10%] w-[600px] h-[600px] bg-gradient-to-tl from-white to-orange-50/40 rounded-full blur-[100px] pointer-events-none z-0 transform -translate-y-1/2 parallax-bg-orb-3"></div>
-
-        <div class="max-w-[1440px] w-full mx-auto px-6 lg:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 pt-12">
-            
-            <!-- Headline Editorial Dobra 2 -->
-            <div class="lg:grid lg:grid-cols-2 gap-10 lg:gap-14 col-span-1 lg:col-span-2 mb-12">
-                <div class="col-span-1">
-                    <h2 class="text-6xl md:text-8xl font-serif italic text-stone-900 product-elem leading-[0.8] tracking-tighter">
+        <div class="collection-grid">
+            <div class="collection-header">
+                <div>
+                    <h2 class="collection-title product-elem">
                         The Concept<br>
-                        <span class="text-3xl md:text-4xl text-stone-400 not-italic tracking-normal mt-4 block">Na Real, Seja Real.</span>
+                        <span class="collection-subtitle">Na Real, Seja Real.</span>
                     </h2>
                 </div>
-                <div class="col-span-1 flex items-end">
-                    <p class="text-stone-500 text-sm max-w-xs font-light leading-relaxed product-elem uppercase tracking-widest text-[10px]">
+                <div class="collection-desc-col">
+                    <p class="collection-desc product-elem">
                         Curadoria Bianca Queiroz. Uma alma livre, um olhar autêntico. QB é a união do técnico com o lifestyle orgânico.
                     </p>
                 </div>
             </div>
 
-            <!-- Floating Editorial Lettering -->
-            <div class="hidden lg:block absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none -rotate-90 origin-left">
-                <span class="text-[8px] font-mono tracking-[0.5em] text-stone-300 uppercase">THE ART OF DETAIL â€” BY BIANCA QUEIROZ</span>
-            </div>
-            
             <!-- produto 01 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="1">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 01</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="1" data-name="IBIZA" data-price="1299" data-img="assets/img/tech_glasses.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 01</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar IBIZA ao carrinho" data-id="1" data-name="IBIZA" data-price="1299" data-img="assets/img/tech_glasses.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-ibiza">IBIZA</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-ibiza">IBIZA</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/tech_glasses.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/tech_glasses.png" alt="Óculos IBIZA QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">UV400 PROTECT â€¢ GRADE 5 TITANIUM</span>
+                <span class="tech-spec-label">UV400 PROTECT &bull; GRADE 5 TITANIUM</span>
             </article>
 
             <!-- produto 02 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="2">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 02</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="2" data-name="MALDIVES" data-price="1499" data-img="assets/img/white_glasses.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 02</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar MALDIVES ao carrinho" data-id="2" data-name="MALDIVES" data-price="1499" data-img="assets/img/white_glasses.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-maldives">MALDIVES</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-maldives">MALDIVES</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/white_glasses.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/white_glasses.png" alt="Óculos MALDIVES QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">HIGH-GLOSS POLYMER â€¢ CERAMIC CORE</span>
+                <span class="tech-spec-label">HIGH-GLOSS POLYMER &bull; CERAMIC CORE</span>
             </article>
 
             <!-- produto 03 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="3">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 03</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="3" data-name="ST TROPEZ" data-price="2199" data-img="assets/img/produto%2003.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 03</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar ST. TROPEZ ao carrinho" data-id="3" data-name="ST TROPEZ" data-price="2199" data-img="assets/img/produto%2003.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-sttropez">ST. TROPEZ</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-sttropez">ST. TROPEZ</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2003.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2003.png" alt="Óculos ST. TROPEZ QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">24K GOLD LAYER â€¢ POLARIZED G15</span>
+                <span class="tech-spec-label">24K GOLD LAYER &bull; POLARIZED G15</span>
             </article>
 
             <!-- produto 04 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="4">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 04</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="4" data-name="MYKONOS" data-price="1399" data-img="assets/img/produto%2004.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 04</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar MYKONOS ao carrinho" data-id="4" data-name="MYKONOS" data-price="1399" data-img="assets/img/produto%2004.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-mykonos">MYKONOS</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-mykonos">MYKONOS</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2004.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2004.png" alt="Óculos MYKONOS QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">MATTE NOIR FINISH â€¢ SUPER-LIGHT</span>
+                <span class="tech-spec-label">MATTE NOIR FINISH &bull; SUPER-LIGHT</span>
             </article>
 
-
             <!-- produto 05 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="5">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 05</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="5" data-name="BORA BORA" data-price="1299" data-img="assets/img/produto%2005.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 05</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar BORA BORA ao carrinho" data-id="5" data-name="BORA BORA" data-price="1299" data-img="assets/img/produto%2005.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-borabora">BORA BORA</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-borabora">BORA BORA</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2005.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2005.png" alt="Óculos BORA BORA QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">POLARIZED LENSES â€¢ TR90 FLEX</span>
+                <span class="tech-spec-label">POLARIZED LENSES &bull; TR90 FLEX</span>
             </article>
 
             <!-- produto 06 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="6">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 06</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="6" data-name="CAPRI" data-price="1899" data-img="assets/img/produto%2006.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 06</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar CAPRI ao carrinho" data-id="6" data-name="CAPRI" data-price="1899" data-img="assets/img/produto%2006.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-capri">CAPRI</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-capri">CAPRI</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2006.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2006.png" alt="Óculos CAPRI QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">HIGH-REFLECTIVE COAT â€¢ CARBON TEMPLES</span>
+                <span class="tech-spec-label">HIGH-REFLECTIVE COAT &bull; CARBON TEMPLES</span>
             </article>
 
             <!-- produto 07 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="7">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 07</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="7" data-name="NAVARIO" data-price="1299" data-img="assets/img/produto%2007.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 07</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar NAVARIO ao carrinho" data-id="7" data-name="NAVARIO" data-price="1299" data-img="assets/img/produto%2007.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-navario">NAVARIO</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-navario">NAVARIO</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2007.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2007.png" alt="Óculos NAVARIO QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">RUBY CRYSTAL LENSES â€¢ HANDMADE</span>
+                <span class="tech-spec-label">RUBY CRYSTAL LENSES &bull; HANDMADE</span>
             </article>
 
             <!-- produto 08 -->
-            <article class="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.06)] flex flex-col product-card border border-stone-100 relative group transition-all duration-700 min-h-[480px]">
+            <article class="product-card" data-product-id="8">
                 <div class="card-spotlight"></div>
-                <div class="w-full p-6 flex flex-col h-[18%] bg-white relative z-10">
-                    <div class="flex justify-between items-start product-elem">
-                        <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-stone-400 uppercase">produto 08</span>
-                        <div class="w-6 h-6 bg-stone-50 rounded-full flex items-center justify-center text-stone-400 cursor-pointer hover:bg-stone-900 hover:text-white transition-all add-to-cart" data-id="8" data-name="VIK" data-price="1099" data-img="assets/img/produto%2008.png">
-                            <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-xs"></iconify-icon>
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="card-number">produto 08</span>
+                        <div class="add-to-cart" role="button" tabindex="0" aria-label="Adicionar VIK ao carrinho" data-id="8" data-name="VIK" data-price="1099" data-img="assets/img/produto%2008.png">
+                            <iconify-icon icon="solar:cart-large-minimalistic-linear" width="12"></iconify-icon>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-3xl font-display font-bold tracking-tight product-title-container leading-none">
-                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal inline-block italic text-vik">VIK</span></div>
+                    <h3 class="card-title product-title-container">
+                        <div class="text-reveal-wrapper"><span class="text-reveal-content product-title-reveal italic text-vik">VIK</span></div>
                     </h3>
                 </div>
-                <div class="w-full h-[82%] relative overflow-hidden flex items-center justify-center p-6 bg-white">
+                <div class="card-image-wrap">
                     <div class="shine-effect"></div>
-                    <img src="assets/img/produto%2008.png" class="w-full h-full object-contain filter grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out">
+                    <img src="assets/img/produto%2008.png" alt="Óculos VIK QB Oficial" class="card-img" width="400" height="400" loading="lazy" decoding="async">
                 </div>
-                <span class="tech-spec-label">NIGHT-VISION TECH â€¢ SCRATCH RESISTANT</span>
+                <span class="tech-spec-label">NIGHT-VISION TECH &bull; SCRATCH RESISTANT</span>
             </article>
-
         </div>
     </section>
 
-    <!-- 4.0 THE HERITAGE (Autoridade & Tech) -->
-    <section id="heritage" class="min-h-screen bg-stone-900 text-white flex items-center py-24 md:py-32 relative overflow-hidden" style="z-index: 30;">
-        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-amber-500/10 to-transparent rounded-full blur-[150px] pointer-events-none opacity-50"></div>
-        <div class="max-w-[1440px] w-full mx-auto px-6 lg:px-12 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <!-- 4.0 THE HERITAGE -->
+    <section id="heritage" class="heritage-section">
+        <div class="heritage-orb" aria-hidden="true"></div>
+        <div class="section-inner">
+            <div class="heritage-grid">
                 <div class="product-elem">
-                    <span class="text-[10px] font-mono tracking-[0.4em] text-stone-500 uppercase mb-6 block">04 / THE HERITAGE</span>
-                    <h2 class="text-6xl md:text-8xl font-serif italic mb-12 leading-[0.9] tracking-tighter">
+                    <span class="section-eyebrow">04 / THE HERITAGE</span>
+                    <h2 class="heritage-title">
                         Tecnologia<br>de Precisão.<br>
-                        <span class="text-stone-500 not-italic">Design de Alma.</span>
+                        <span class="heritage-sub">Design de Alma.</span>
                     </h2>
-                    <div class="space-y-12 max-w-lg">
-                        <div class="flex gap-6 border-l border-stone-800 pl-6 group transition-all hover:border-amber-400">
-                            <span class="text-sm font-mono text-stone-400 mt-1">01</span>
+                    <div class="heritage-specs">
+                        <div class="spec-item">
+                            <span class="spec-num">01</span>
                             <div>
-                                <h4 class="text-lg font-bold mb-2">Grau 5 de Titânio</h4>
-                                <p class="text-stone-500 text-sm leading-relaxed">Utilizamos o mesmo titânio da indústria aeroespacial: indestrutível, ultra-leve e hipoalergênico.</p>
+                                <h4 class="spec-title">Grau 5 de Titânio</h4>
+                                <p class="spec-desc">Utilizamos o mesmo titânio da indústria aeroespacial: indestrutível, ultra-leve e hipoalergênico.</p>
                             </div>
                         </div>
-                        <div class="flex gap-6 border-l border-stone-800 pl-6 group transition-all hover:border-amber-400">
-                            <span class="text-sm font-mono text-stone-400 mt-1">02</span>
+                        <div class="spec-item">
+                            <span class="spec-num">02</span>
                             <div>
-                                <h4 class="text-lg font-bold mb-2">Clareza G15</h4>
-                                <p class="text-stone-500 text-sm leading-relaxed">Lentes polarizadas com tecnologia de contraste realçado, protegendo 100% contra raios UVA/UVB.</p>
+                                <h4 class="spec-title">Clareza G15</h4>
+                                <p class="spec-desc">Lentes polarizadas com tecnologia de contraste realçado, protegendo 100% contra raios UVA/UVB.</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="relative product-elem">
-                    <div class="aspect-[4/5] rounded-[3rem] overflow-hidden bg-stone-800 perspective-wrapper">
-                        <img src="assets/img/tech_glasses.png" class="w-full h-full object-contain grayscale opacity-60 hover:opacity-100 transition-all duration-1000">
+                <div class="heritage-media product-elem">
+                    <div class="heritage-img-wrap">
+                        <img src="assets/img/tech_glasses.png" alt="Tecnologia de Precisão QB" class="heritage-img" width="500" height="625" loading="lazy" decoding="async">
                     </div>
-                    <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-[#fdfcf0] p-8 rounded-full flex items-center justify-center text-center shadow-2xl">
-                        <span class="text-black text-[9px] font-mono font-bold tracking-widest uppercase">Handmade Precision</span>
-                    </div>
+                    <div class="heritage-badge"><span>Handmade Precision</span></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 5.0 LIFESTYLE (Prova Social / Estilo de Vida) -->
-    <section id="lifestyle" class="bg-[#fdfcf0] py-24 md:py-32 relative overflow-hidden" style="z-index: 30;">
-        <div class="max-w-[1440px] w-full mx-auto px-6 lg:px-12 relative z-10">
-            <div class="text-center mb-24">
-                <span class="text-[10px] font-mono tracking-[0.4em] text-stone-400 uppercase mb-4 block">05 / NA REAL</span>
-                <h2 class="text-6xl md:text-8xl font-serif italic text-stone-900 tracking-tighter">
-                    "Na Real, Seja Real."
-                </h2>
+    <!-- 5.0 LIFESTYLE -->
+    <section id="lifestyle" class="lifestyle-section">
+        <div class="section-inner">
+            <div class="lifestyle-header">
+                <span class="section-eyebrow">05 / NA REAL</span>
+                <h2 class="lifestyle-title">"Na Real, Seja Real."</h2>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="aspect-[3/4] rounded-3xl overflow-hidden bg-stone-100 product-elem group">
-                    <img src="assets/img/produto 03.png" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
+            <div class="lifestyle-grid">
+                <div class="lifestyle-card product-elem">
+                    <img src="assets/img/produto 03.png" alt="QB Lifestyle — St. Tropez" class="lifestyle-img" width="400" height="533" loading="lazy" decoding="async">
                 </div>
-                <div class="aspect-[3/4] rounded-3xl overflow-hidden bg-stone-100 product-elem group mt-12 md:mt-24">
-                    <img src="assets/img/produto 04.png" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
+                <div class="lifestyle-card lifestyle-card--offset product-elem">
+                    <img src="assets/img/produto 04.png" alt="QB Lifestyle — Mykonos" class="lifestyle-img" width="400" height="533" loading="lazy" decoding="async">
                 </div>
-                <div class="aspect-[3/4] rounded-3xl overflow-hidden bg-stone-100 product-elem group">
-                    <img src="assets/img/produto 05.png" class="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000">
+                <div class="lifestyle-card product-elem">
+                    <img src="assets/img/produto 05.png" alt="QB Lifestyle — Bora Bora" class="lifestyle-img" width="400" height="533" loading="lazy" decoding="async">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 6.0 CONVERSÃƒO & FAQ (Garantia & Compra) -->
-    <section id="faq" class="bg-[#f8f8f8] py-24 md:py-40 relative overflow-hidden" style="z-index: 30;">
-        <div class="max-w-[1440px] w-full mx-auto px-6 lg:px-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
-                
-                <!-- Coluna 01: FAQ Editorial -->
-                <div class="lg:col-span-5 product-elem">
-                    <h2 class="text-6xl md:text-7xl font-serif italic text-stone-900 leading-[0.9] tracking-tighter mb-16">
-                        The Vision<br>Clarified.
-                    </h2>
-                    <div class="space-y-6">
-                        <details class="group border-b border-stone-200 pb-6 cursor-pointer">
-                            <summary class="list-none flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 transition-colors">
-                                Entrega & Prazos
-                                <iconify-icon icon="solar:round-alt-arrow-down-linear" class="text-xl group-open:rotate-180 transition-transform"></iconify-icon>
+    <!-- 6.0 FAQ & CONVERSÃO -->
+    <section id="faq" class="faq-section">
+        <div class="section-inner">
+            <div class="faq-grid">
+                <div class="faq-col product-elem">
+                    <h2 class="faq-title">The Vision<br>Clarified.</h2>
+                    <div class="faq-list">
+                        <details class="faq-item">
+                            <summary class="faq-summary">
+                                Entrega &amp; Prazos
+                                <iconify-icon icon="solar:round-alt-arrow-down-linear" class="faq-icon" aria-hidden="true"></iconify-icon>
                             </summary>
-                            <p class="mt-6 text-stone-400 text-sm font-light leading-relaxed max-w-sm italic">
-                                Enviamos sua visão absoluta via Sedex Premium com seguro total. O prazo médio de entrega para capitais é de 2 a 5 dias úteis.
-                            </p>
+                            <p class="faq-answer">Enviamos via Sedex Premium com seguro total. Prazo médio: 2 a 5 dias úteis para capitais.</p>
                         </details>
-                        <details class="group border-b border-stone-200 pb-6 cursor-pointer">
-                            <summary class="list-none flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 transition-colors">
+                        <details class="faq-item">
+                            <summary class="faq-summary">
                                 Garantia Eterna
-                                <iconify-icon icon="solar:round-alt-arrow-down-linear" class="text-xl group-open:rotate-180 transition-transform"></iconify-icon>
+                                <iconify-icon icon="solar:round-alt-arrow-down-linear" class="faq-icon" aria-hidden="true"></iconify-icon>
                             </summary>
-                            <p class="mt-6 text-stone-400 text-sm font-light leading-relaxed max-w-sm italic">
-                                Oferecemos garantia estrutural de 1 ano e suporte vitalício para ajustes em qualquer uma de nossas boutiques parceiras.
-                            </p>
+                            <p class="faq-answer">Garantia estrutural de 1 ano e suporte vitalício para ajustes em nossas boutiques parceiras.</p>
                         </details>
                     </div>
-
-                    <!-- SOCIAL ICONS: "NOSSO JEITO" -->
-                    <div class="mt-20">
-                        <span class="text-[10px] font-mono tracking-[0.3em] text-stone-400 uppercase mb-8 block">Siga a QB Oficial</span>
-                        <div class="flex gap-4">
-                            <a href="https://www.instagram.com/qboficial?igsh=MXdxang1dXVwaWQ5NA==" target="_blank" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-stone-900 shadow-sm border border-stone-100 hover:bg-stone-900 hover:text-white hover:-translate-y-1 transition-all duration-500 group">
-                                <iconify-icon icon="bi:instagram" class="text-lg"></iconify-icon>
+                    <div class="social-section">
+                        <span class="social-label">Siga a QB Oficial</span>
+                        <div class="social-links">
+                            <a href="https://www.instagram.com/qboficial?igsh=MXdxang1dXVwaWQ5NA==" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram QB Oficial">
+                                <iconify-icon icon="bi:instagram" width="18" aria-hidden="true"></iconify-icon>
                             </a>
-                            <a href="https://www.tiktok.com/@qbiancas?_r=1&_t=ZS-95IJ9jNWIPX" target="_blank" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-stone-900 shadow-sm border border-stone-100 hover:bg-stone-900 hover:text-white hover:-translate-y-1 transition-all duration-500 group">
-                                <iconify-icon icon="bi:tiktok" class="text-lg"></iconify-icon>
+                            <a href="https://www.tiktok.com/@qbiancas?_r=1&_t=ZS-95IJ9jNWIPX" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="TikTok QB Oficial">
+                                <iconify-icon icon="bi:tiktok" width="18" aria-hidden="true"></iconify-icon>
                             </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Coluna 02: Banner de Conversão Premium -->
-                <div class="lg:col-span-7 product-elem">
-                    <div class="bg-stone-900 rounded-[3rem] p-12 md:p-24 text-white flex flex-col justify-center items-start relative overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent pointer-events-none"></div>
-                        <div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
-                            <div class="grid grid-cols-12 gap-1 w-full h-full">
-                                <div class="col-span-1 border-r border-white/5 h-full"></div>
-                                <div class="col-span-1 border-r border-white/5 h-full"></div>
-                                <div class="col-span-1 border-r border-white/5 h-full"></div>
-                            </div>
-                        </div>
-                        
-                        <h3 class="text-5xl md:text-7xl font-serif italic mb-10 relative z-10 leading-[0.9] tracking-tighter">
-                            Pronto para<br>elevar a sua<br>visão?
-                        </h3>
-                        <p class="text-sm text-stone-400 font-light mb-12 max-w-sm tracking-wide leading-relaxed">
-                            A coleção QB 26 está disponível em quantidades rigorosamente limitadas. Garanta sua autenticidade agora.
-                        </p>
-                        <button class="bg-white text-black px-12 py-6 rounded-full font-bold tracking-[0.2em] uppercase text-[10px] hover:bg-amber-100 transition-all relative z-10 shadow-2xl" id="final-cta">
-                            Descobrir a Coleção
-                        </button>
+                <div class="cta-col product-elem">
+                    <div class="cta-banner">
+                        <div class="cta-glow" aria-hidden="true"></div>
+                        <h3 class="cta-title">Pronto para<br>elevar a sua<br>visão?</h3>
+                        <p class="cta-desc">A coleção QB 26 está disponível em quantidades rigorosamente limitadas.</p>
+                        <button class="cta-btn" id="final-cta">Descobrir a Coleção</button>
                     </div>
                 </div>
-
             </div>
-            
-            <!-- Footer Signature -->
-            <div class="mt-32 pt-12 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-8 product-elem">
-                <span class="text-[8px] font-mono tracking-[0.5em] text-stone-300 uppercase">&copy; 2026 QB OFICIAL &mdash; ALL THE TIME</span>
-                <img src="assets/img/logo.png" class="h-6 opacity-20 filter grayscale invert" alt="QB Logo">
-                <span class="text-[8px] font-mono tracking-[0.5em] text-stone-300 uppercase cursor-pointer hover:text-stone-900 transition-colors">Privacy &bull; Terms &bull; Cookies</span>
-            </div>
+            <footer class="site-footer product-elem">
+                <span class="footer-copy">&copy; 2026 QB OFICIAL &mdash; ALL THE TIME</span>
+                <img src="assets/img/logo.png" class="footer-logo" alt="QB Oficial" width="80" height="26" loading="lazy">
+                <span class="footer-links">Privacy &bull; Terms &bull; Cookies</span>
+            </footer>
         </div>
     </section>
 
-
-    <!-- IdentificaÃ§Ã£o Drawer -->
-    <div class="cart-overlay" id="user-overlay"></div>
-    <div class="cart-drawer" id="user-drawer">
+    <!-- Drawers -->
+    <div class="cart-overlay" id="user-overlay" aria-hidden="true"></div>
+    <div class="cart-drawer" id="user-drawer" role="dialog" aria-label="Painel do usuário" aria-modal="true">
         <div class="cart-header">
-            <h3 class="text-xl font-display font-bold tracking-tight">Identificação</h3>
-            <button id="close-user" class="text-stone-400 hover:text-stone-900 transition-colors">
-                <iconify-icon icon="solar:close-circle-linear" class="text-3xl"></iconify-icon>
+            <h3 class="drawer-heading">Identificação</h3>
+            <button id="close-user" class="icon-btn" aria-label="Fechar painel">
+                <iconify-icon icon="solar:close-circle-linear" width="30"></iconify-icon>
             </button>
         </div>
-
         <div class="p-8 flex-1 overflow-y-auto" id="user-drawer-content">
-            <!-- VIEW: LOGIN -->
             <div id="view-login" class="user-view animate-fade-in">
-                <p class="text-stone-400 text-sm font-light mb-8 italic">Bem-vindo de volta.</p>
-                
-                <div class="space-y-4">
+                <p class="drawer-intro">Bem-vindo de volta.</p>
+                <div class="form-stack">
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">E-mail</label>
-                        <input type="email" placeholder="nome@exemplo.com" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
+                        <label class="form-label" for="login-email">E-mail</label>
+                        <input type="email" id="login-email" placeholder="nome@exemplo.com" class="form-input">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">Senha</label>
-                        <input type="password" placeholder="********" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
+                        <label class="form-label" for="login-pass">Senha</label>
+                        <input type="password" id="login-pass" placeholder="********" class="form-input">
                     </div>
-                    <button id="mock-login-btn" class="w-full bg-stone-900 text-white py-5 rounded-full font-bold tracking-widest uppercase text-[10px] hover:bg-black transition-all shadow-xl mt-4">
-                        Entrar na Conta
-                    </button>
-                    <p class="text-center mt-6">
-                        <span class="text-[9px] text-stone-400 uppercase tracking-widest">Ainda não é membro?</span><br>
-                        <button onclick="switchUserView('register')" class="text-[10px] font-bold uppercase tracking-widest mt-2 hover:text-amber-600 transition-colors">Criar Passe Premium</button>
+                    <button id="mock-login-btn" class="btn-dark mt-4">Entrar na Conta</button>
+                    <p class="form-switch">
+                        <span class="form-switch-label">Ainda não é membro?</span><br>
+                        <button onclick="switchUserView('register')" class="form-switch-btn">Criar Passe Premium</button>
                     </p>
                 </div>
             </div>
-
-            <!-- VIEW: LOGGED STATE (Painel de Membro) -->
             <div id="view-member" class="user-view animate-fade-in user-logged-state">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
-                        <iconify-icon icon="solar:user-bold" class="text-stone-400"></iconify-icon>
+                <div class="member-header">
+                    <div class="member-avatar" aria-hidden="true">
+                        <iconify-icon icon="solar:user-bold" width="20"></iconify-icon>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-stone-400">Passe Ativo</p>
-                        <h4 id="user-display-name" class="text-sm font-bold text-stone-900">Membro Premium</h4>
+                        <p class="member-badge">Passe Ativo</p>
+                        <h4 id="user-display-name" class="member-name">Membro Premium</h4>
                     </div>
                 </div>
-                <div class="space-y-3">
-                    <button class="w-full bg-stone-50 p-4 rounded-2xl flex items-center justify-between group hover:bg-stone-100 transition-all">
-                        <span class="text-[9px] font-bold uppercase tracking-widest">Seus Pedidos</span>
-                        <iconify-icon icon="solar:alt-arrow-right-linear" class="text-stone-300 group-hover:translate-x-1 transition-transform"></iconify-icon>
-                    </button>
-                    <button class="w-full bg-stone-50 p-4 rounded-2xl flex items-center justify-between group hover:bg-stone-100 transition-all">
-                        <span class="text-[9px] font-bold uppercase tracking-widest">Favoritos</span>
-                        <iconify-icon icon="solar:alt-arrow-right-linear" class="text-stone-300 group-hover:translate-x-1 transition-transform"></iconify-icon>
-                    </button>
-                    <button onclick="logoutMock()" class="w-full text-center py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-red-400 hover:text-red-600 transition-colors mt-8">Sair da Conta</button>
+                <div class="member-actions">
+                    <button class="member-action-btn"><span>Seus Pedidos</span><iconify-icon icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></button>
+                    <button class="member-action-btn"><span>Favoritos</span><iconify-icon icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></button>
+                    <button onclick="logoutMock()" class="member-logout">Sair da Conta</button>
                 </div>
             </div>
-
-            <!-- VIEW: REGISTER -->
             <div id="view-register" class="user-view hidden">
-                <p class="text-stone-400 text-sm font-light mb-8 italic">Torne-se um membro da visão absoluta.</p>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">Nome Completo</label>
-                        <input type="text" placeholder="Como devemos te chamar?" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">WhatsApp</label>
-                        <input type="text" placeholder="(00) 00000-0000" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">E-mail</label>
-                        <input type="email" placeholder="seu@email-melhor.com" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 block mb-2">Crie uma Senha</label>
-                        <input type="password" placeholder="Mínimo 6 caracteres" class="w-full bg-stone-50 border border-stone-100 p-4 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm">
-                    </div>
-                    <button class="w-full bg-stone-900 text-white py-5 rounded-full font-bold tracking-widest uppercase text-[10px] hover:bg-black transition-all shadow-xl mt-4">
-                        Confirmar Cadastro
-                    </button>
-                    <p class="text-center mt-6">
-                        <span class="text-[9px] text-stone-400 uppercase tracking-widest">Já possui um passe?</span><br>
-                        <button onclick="switchUserView('login')" class="text-[10px] font-bold uppercase tracking-widest mt-2 hover:text-amber-600 transition-colors">Acessar Conta</button>
+                <p class="drawer-intro">Torne-se um membro da visão absoluta.</p>
+                <div class="form-stack">
+                    <div><label class="form-label" for="reg-name">Nome Completo</label><input type="text" id="reg-name" placeholder="Como devemos te chamar?" class="form-input"></div>
+                    <div><label class="form-label" for="reg-whatsapp">WhatsApp</label><input type="tel" id="reg-whatsapp" placeholder="(00) 00000-0000" class="form-input"></div>
+                    <div><label class="form-label" for="reg-email">E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com" class="form-input"></div>
+                    <div><label class="form-label" for="reg-pass">Senha</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" class="form-input"></div>
+                    <button class="btn-dark mt-4">Confirmar Cadastro</button>
+                    <p class="form-switch">
+                        <span class="form-switch-label">Já possui um passe?</span><br>
+                        <button onclick="switchUserView('login')" class="form-switch-btn">Acessar Conta</button>
                     </p>
                 </div>
             </div>
-
-            <div class="pt-8 mt-8 border-t border-stone-100">
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-300 mb-6 font-mono">Suporte VIP</p>
-                <div class="space-y-2">
-                    <a href="https://wa.me/message/FV37UMP6GFRWL1" target="_blank" class="flex items-center gap-4 group p-3 rounded-2xl hover:bg-stone-50 transition-all">
-                        <iconify-icon icon="ic:baseline-whatsapp" class="text-xl text-stone-300 group-hover:text-green-500"></iconify-icon>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-stone-900 transition-colors">WhatsApp Concierge</span>
-                    </a>
-                </div>
+            <div class="vip-support">
+                <p class="vip-label">Suporte VIP</p>
+                <a href="https://wa.me/message/FV37UMP6GFRWL1" target="_blank" rel="noopener noreferrer" class="vip-link">
+                    <iconify-icon icon="ic:baseline-whatsapp" width="20" aria-hidden="true"></iconify-icon>
+                    <span>WhatsApp Concierge</span>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Cart Overlay & Drawer -->
-    <div class="cart-overlay" id="cart-overlay"></div>
-    <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
+    <div class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Carrinho" aria-modal="true">
         <div class="cart-header">
-            <h3 class="text-xl font-display font-bold tracking-tight">Seu Carrinho</h3>
-            <button id="close-cart" class="text-stone-400 hover:text-stone-900 transition-colors">
-                <iconify-icon icon="solar:close-circle-linear" class="text-3xl"></iconify-icon>
+            <h3 class="drawer-heading">Seu Carrinho</h3>
+            <button id="close-cart" class="icon-btn" aria-label="Fechar carrinho">
+                <iconify-icon icon="solar:close-circle-linear" width="30"></iconify-icon>
             </button>
         </div>
-
         <div class="cart-items" id="cart-items-container">
-            <!-- Items will be injected here -->
-            <div class="flex flex-col items-center justify-center h-full text-stone-400 gap-4">
-                <iconify-icon icon="solar:cart-plus-linear" class="text-5xl opacity-20"></iconify-icon>
-                <p class="text-sm font-mono uppercase tracking-widest">Carrinho Vazio</p>
+            <div class="cart-empty">
+                <iconify-icon icon="solar:cart-plus-linear" width="48" aria-hidden="true"></iconify-icon>
+                <p>Carrinho Vazio</p>
             </div>
         </div>
-
         <div class="cart-footer">
-            <div class="flex justify-between items-center mb-6 pt-4 border-t border-stone-50">
-                <div class="flex flex-col">
-                    <span class="text-stone-400 font-mono text-xs uppercase tracking-widest">Subtotal</span>
-                </div>
-                <span class="text-2xl font-display font-bold" id="cart-total">R$ 0,00</span>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Subtotal</span>
+                <span class="cart-total-value" id="cart-total">R$ 0,00</span>
             </div>
-            
-            <div class="flex flex-col gap-5 mb-8">
-                <button id="final-checkout-btn" class="w-full bg-stone-900 text-white py-5 rounded-full font-medium tracking-wide hover:bg-black transition-all shadow-xl shadow-stone-200 flex items-center justify-center gap-3 group">
+            <div class="cart-actions">
+                <button id="final-checkout-btn" class="btn-checkout">
                     Finalizar Compra
-                    <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+                    <iconify-icon icon="solar:arrow-right-linear" aria-hidden="true"></iconify-icon>
                 </button>
-                
-                <div class="flex items-center justify-center gap-5 opacity-40">
-                    <iconify-icon icon="logos:pix" class="text-lg"></iconify-icon>
-                    <iconify-icon icon="logos:mastercard" class="text-lg"></iconify-icon>
-                    <iconify-icon icon="logos:visa" class="text-lg"></iconify-icon>
-                    <iconify-icon icon="logos:apple-pay" class="text-lg"></iconify-icon>
+                <div class="payment-icons" aria-label="Formas de pagamento">
+                    <iconify-icon icon="logos:pix" width="20" aria-label="PIX"></iconify-icon>
+                    <iconify-icon icon="logos:mastercard" width="20" aria-label="Mastercard"></iconify-icon>
+                    <iconify-icon icon="logos:visa" width="20" aria-label="Visa"></iconify-icon>
+                    <iconify-icon icon="logos:apple-pay" width="20" aria-label="Apple Pay"></iconify-icon>
                 </div>
             </div>
-
-            <p class="text-[9px] text-stone-400 text-center uppercase tracking-[0.2em] leading-relaxed opacity-60">
-                "Na Real, Seja Real."<br>
-                CHECKOUT SEGURO & CRIPTOGRAFADO
-            </p>
+            <p class="cart-tagline">CHECKOUT SEGURO &amp; CRIPTOGRAFADO</p>
         </div>
     </div>
 
-    <!-- 8.0 PRODUCT DETAILS DRAWER (Quick View) -->
-    <div id="product-overlay" class="cart-overlay"></div>
-    <div id="product-drawer" class="cart-drawer bg-white/98 w-full max-w-[500px]">
-        <div class="cart-header border-none pt-12">
-            <h2 class="text-3xl font-display font-bold tracking-tight text-stone-900">Detalhes</h2>
-            <button id="close-product" class="w-10 h-10 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:rotate-90 transition-all duration-300">
-                <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
+    <div id="product-overlay" class="cart-overlay" aria-hidden="true"></div>
+    <div id="product-drawer" class="cart-drawer product-drawer" role="dialog" aria-label="Detalhes do produto" aria-modal="true">
+        <div class="cart-header pd-header">
+            <h2 class="drawer-heading-lg">Detalhes</h2>
+            <button id="close-product" class="icon-btn close-rotate" aria-label="Fechar">
+                <iconify-icon icon="solar:close-circle-linear" width="24"></iconify-icon>
             </button>
         </div>
-
-        <div class="flex-1 overflow-y-auto px-10 pb-12">
-            <!-- Capa do produto no Drawer -->
-            <div class="relative w-full aspect-square bg-stone-50 rounded-[2.5rem] flex items-center justify-center p-8 mb-10 overflow-hidden group">
-                <img id="drawer-p-img" src="" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-1000" alt="">
-                <div class="absolute inset-0 bg-radial-gradient from-white/20 to-transparent"></div>
+        <div class="pd-body">
+            <div class="pd-image-wrap">
+                <img id="drawer-p-img" src="" alt="" class="pd-img" width="300" height="300">
             </div>
-
-            <div class="space-y-8">
+            <div class="pd-info">
                 <div>
-                    <span id="drawer-p-model" class="text-[9px] font-mono font-bold tracking-[0.3em] text-stone-400 uppercase block mb-3">produto EXCLUSIVO</span>
-                    <h3 id="drawer-p-name" class="text-5xl font-display font-bold tracking-tighter text-stone-900 leading-none mb-4 italic">NOME</h3>
-                    <p id="drawer-p-price" class="text-xl font-bold text-stone-900">R$ 0,00</p>
+                    <span id="drawer-p-model" class="pd-model">PRODUTO EXCLUSIVO</span>
+                    <h3 id="drawer-p-name" class="pd-name">NOME</h3>
+                    <p id="drawer-p-price" class="pd-price">R$ 0,00</p>
                 </div>
-
-                <div class="pt-8 border-t border-stone-100">
-                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-6">Especificações Técnicas</h4>
-                    <div class="grid grid-cols-1 gap-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-stone-50 rounded-2xl flex items-center justify-center">
-                                <iconify-icon icon="solar:atom-linear" class="text-stone-400"></iconify-icon>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-stone-900">Titânio Grau 5</p>
-                                <p class="text-[10px] text-stone-400 leading-relaxed uppercase">Ultra-Leve & Hipoalergênico</p>
-                            </div>
+                <div class="pd-specs">
+                    <h4 class="pd-specs-title">Especificações Técnicas</h4>
+                    <div class="pd-specs-grid">
+                        <div class="pd-spec-row">
+                            <div class="pd-spec-icon" aria-hidden="true"><iconify-icon icon="solar:atom-linear" width="16"></iconify-icon></div>
+                            <div><p class="pd-spec-name">Titânio Grau 5</p><p class="pd-spec-detail">Ultra-Leve &amp; Hipoalergênico</p></div>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-stone-50 rounded-2xl flex items-center justify-center">
-                                <iconify-icon icon="solar:eye-linear" class="text-stone-400"></iconify-icon>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-stone-900">Lentes G15</p>
-                                <p class="text-[10px] text-stone-400 leading-relaxed uppercase">Polarização com Contraste Realçado</p>
-                            </div>
+                        <div class="pd-spec-row">
+                            <div class="pd-spec-icon" aria-hidden="true"><iconify-icon icon="solar:eye-linear" width="16"></iconify-icon></div>
+                            <div><p class="pd-spec-name">Lentes G15</p><p class="pd-spec-detail">Polarização com Contraste Realçado</p></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-10">
-                    <button id="drawer-add-btn" class="w-full bg-stone-900 text-white py-6 rounded-3xl font-bold tracking-widest uppercase text-xs hover:bg-black transition-all shadow-2xl hover:-translate-y-1">
-                        ADICIONAR AO CARRINHO
-                    </button>
-                    <p class="text-[9px] text-stone-400 uppercase tracking-widest text-center mt-6">Entrega Expressa Gratuita em Todo o Brasil</p>
+                <div class="pd-cta">
+                    <button id="drawer-add-btn" class="btn-dark-lg">ADICIONAR AO CARRINHO</button>
+                    <p class="pd-shipping">Entrega Expressa Gratuita em Todo o Brasil</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main JS -->
-    <script src="assets/js/main.js"></script>
+    <!-- Iconify: defer para não bloquear -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" defer></script>
+
+    <!-- GSAP: apenas após frame inicial estar pintado -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js" defer></script>
+
+    <!-- App JS -->
+    <script src="assets/js/main.js" defer></script>
 </body>
 
 </html>
