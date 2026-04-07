@@ -70,21 +70,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Frame 1: carrega com prioridade máxima (crítico para o LCP)
+    // Frame 1: Carregamento síncrono para o LCP
     const firstImg = new Image();
-    firstImg.fetchPriority = 'high';
     firstImg.src = currentFrame(1);
     images[0] = firstImg;
 
     const startLoadingRemaining = () => {
-        if (window.requestIdleCallback) {
-            requestIdleCallback(loadRemainingFrames);
-        } else {
-            setTimeout(loadRemainingFrames, 50);
-        }
+        // Carrega o resto sem bloquear a thread principal
+        setTimeout(loadRemainingFrames, 10);
     };
 
-    if (firstImg.complete && firstImg.naturalWidth > 0) {
+    if (firstImg.complete) {
         loadedCount++;
         render();
         startLoadingRemaining();
@@ -94,10 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
             render();
             startLoadingRemaining();
         };
-        firstImg.onerror = () => {
-            console.error("Hero frame 1 failed to load. Path: " + firstImg.src);
-            startLoadingRemaining();
-        };
+        firstImg.onerror = startLoadingRemaining;
     }
 
     let lastLoadedFrameIndex = 0;
@@ -108,9 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let activeImage = images[frameIndex];
         
-        // Fallback para a última imagem que realmente carregou
+        // Fallback robusto: se a imagem atual não carregou, usa a última disponível
         if (!activeImage || !activeImage.complete || activeImage.naturalWidth === 0) {
             activeImage = images[lastLoadedFrameIndex];
+            if (!activeImage || !activeImage.complete) return; 
         } else {
             lastLoadedFrameIndex = frameIndex;
         }
