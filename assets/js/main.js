@@ -41,21 +41,18 @@ function initApp() {
     }, { passive: true });
 
     /* ── 2. IMAGE SEQUENCE — desktop only
-       Mobile: mostra apenas o frame estático, sem carregar 20 JPEGs.
-       Isso economiza ~500KB e ~500ms de decode no mobile.         ── */
+       Mobile: mostra apenas o frame estático, sem animação de frames.
+       60 frames de alta qualidade extraídos do vídeo original (7.5fps de 8s). ── */
     const IS_MOBILE = window.innerWidth < 768;
     const canvas = document.getElementById("hero-canvas");
     const context = canvas.getContext("2d");
 
     // Em mobile: apenas deixa o hero-lcp visível, sem animação de frames
     if (IS_MOBILE) {
-        // Escond canvas (o hero-lcp já mostra o frame estático)
         canvas.style.display = 'none';
     } else {
-    // Frames disponíveis: 001, 003, 005 … 039 (20 frames)
-    const TOTAL_FRAMES = 20;
-    const frameIndex = i => String(i * 2 - 1).padStart(3, '0'); // 001,003,005…
-    const frameSrc   = i => `assets/video_frames/ezgif-frame-${frameIndex(i)}.jpg`;
+    const TOTAL_FRAMES = 60;
+    const frameSrc = i => `assets/video_frames/frame-${String(i).padStart(3,'0')}.jpg`;
 
     const images = new Array(TOTAL_FRAMES).fill(null);
     const glassesObj = { frame: 1 };
@@ -70,7 +67,7 @@ function initApp() {
         if (!img || !img.complete || img.naturalWidth === 0) return;
         lastGoodFrame = fi;
 
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap DPR at 2 para performance
         const w = window.innerWidth, h = window.innerHeight;
 
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
@@ -85,29 +82,30 @@ function initApp() {
         context.clearRect(0, 0, sw, sh);
 
         const iW = img.naturalWidth, iH = img.naturalHeight;
-        if (w < 768) {
-            context.save(); context.translate(sw / 2, sh / 2); context.rotate(Math.PI / 2);
-            const s = Math.max(sh / iW, sw / iH);
-            context.drawImage(img, -(iW * s) / 2, -(iH * s) / 2, iW * s, iH * s);
-            context.restore();
-        } else {
-            const r = iW / iH, cr = sw / sh;
-            const dW = cr > r ? sw : sh * r, dH = cr > r ? sw / r : sh;
-            context.drawImage(img, (sw - dW) / 2, (sh - dH) / 2, dW, dH);
-        }
+        const r = iW / iH, cr = sw / sh;
+        const dW = cr > r ? sw : sh * r, dH = cr > r ? sw / r : sh;
+        context.drawImage(img, (sw - dW) / 2, (sh - dH) / 2, dW, dH);
     }
 
-    // Frame 1 (já pré-carregado pelo script inline no <head>)
-    // Reinicia se ainda não tiver a referência
-    if (window._heroFirstFrameLoaded && !images[0]) {
-        const f1 = new Image();
-        f1.src = frameSrc(1);
-        f1.onload = () => { images[0] = f1; render(); };
-        images[0] = f1;
+    // Frame 1 — carregado imediatamente (preloaded no <head>)
+    const f1 = new Image();
+    f1.src = frameSrc(1);
+    f1.onload = () => { images[0] = f1; render(); };
+    images[0] = f1;
+
+    // Frames 2–12: carregam em alta prioridade logo após frame 1
+    // (frames iniciais, visíveis antes do usuário rolar)
+    for (let i = 2; i <= 12; i++) {
+        const img = new Image();
+        img.src = frameSrc(i);
+        img.onload = () => {
+            images[i - 1] = img;
+            if (Math.round(glassesObj.frame) === i) render();
+        };
     }
 
-    // Frames 2–20 via requestIdleCallback para não roubar main thread
-    const loadFrames = (start) => {
+    // Frames 13–60: carregam progressivamente via requestIdleCallback
+    const loadRemainingFrames = (start) => {
         if (start > TOTAL_FRAMES) return;
         const img = new Image();
         img.src = frameSrc(start);
@@ -116,12 +114,12 @@ function initApp() {
             if (Math.round(glassesObj.frame) === start) render();
         };
         if (typeof requestIdleCallback !== 'undefined') {
-            requestIdleCallback(() => loadFrames(start + 1), { timeout: 800 });
+            requestIdleCallback(() => loadRemainingFrames(start + 1), { timeout: 500 });
         } else {
-            setTimeout(() => loadFrames(start + 1), 30);
+            setTimeout(() => loadRemainingFrames(start + 1), 20);
         }
     };
-    loadFrames(2);
+    loadRemainingFrames(13);
 
     let resizeTimer;
     window.addEventListener('resize', () => {
@@ -129,7 +127,7 @@ function initApp() {
         resizeTimer = setTimeout(render, 150);
     }, { passive: true });
 
-    // GSAP scrub da sequência
+    // GSAP scrub — scrub: 3 para transição mais suave e cinematográfica
     gsap.to(glassesObj, {
         frame: TOTAL_FRAMES,
         snap: "frame",
@@ -138,7 +136,7 @@ function initApp() {
             trigger: "#hero",
             start: "top top",
             end: "bottom bottom",
-            scrub: 2
+            scrub: 3
         },
         onUpdate: render
     });

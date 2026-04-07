@@ -21,7 +21,7 @@
     <link rel="prefetch" href="checkout.html" as="document">
 
     <!-- Preload: frame-001 e CSS crítico primeiro -->
-    <link rel="preload" href="assets/video_frames/ezgif-frame-001.jpg" as="image" fetchpriority="high">
+    <link rel="preload" href="assets/video_frames/frame-001.jpg" as="image" fetchpriority="high">
     <link rel="preload" href="assets/css/main.css" as="style">
 
     <!-- Fontes: COMPLETAMENTE NÃO-BLOQUEANTE via preload + onload.
@@ -176,7 +176,7 @@
                 if (lcp) lcp.style.opacity = '0';
                 window._heroFirstFrameLoaded = true;
             };
-            img.src = 'assets/video_frames/ezgif-frame-001.jpg';
+            img.src = 'assets/video_frames/frame-001.jpg';
         }
         // Tenta agora; se DOM não estiver pronto, espera
         if (document.readyState === 'loading') {
@@ -243,7 +243,7 @@
                  aparece antes do JS. O canvas substitui quando pronto. -->
             <div id="hero-lcp" class="hero-lcp" aria-hidden="true">
                 <img
-                    src="assets/video_frames/ezgif-frame-001.jpg"
+                    src="assets/video_frames/frame-001.jpg"
                     alt=""
                     fetchpriority="high"
                     decoding="sync"
