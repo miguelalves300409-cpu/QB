@@ -1,4 +1,4 @@
-(() => {
+document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
 
     /* 1. Animação de Entrada (Intro / Hero Reveal) */
@@ -55,43 +55,29 @@
 
     const frameCount = 40; // Total de frames na pasta
     const currentFrame = index => `assets/video_frames/ezgif-frame-${String(index).padStart(3, '0')}.jpg`;
-    const images = new Array(frameCount).fill(null);
+    const images = [];
     const glassesObj = { frame: 1 };
 
-    let loadedCount = 0;
-
-    // Carrega frames 2-40 em paralelo (chamado após frame 1 estar pronto)
-    const loadRemainingFrames = () => {
-        for (let i = 2; i <= frameCount; i++) {
-            const img = new Image();
-            img.onload = () => { loadedCount++; };
-            img.src = currentFrame(i);
-            images[i - 1] = img;
-        }
-    };
-
-    // Frame 1: Carregamento síncrono para o LCP
-    const firstImg = new Image();
-    firstImg.src = currentFrame(1);
-    images[0] = firstImg;
-
-    const startLoadingRemaining = () => {
-        // Carrega o resto sem bloquear a thread principal
-        setTimeout(loadRemainingFrames, 10);
-    };
-
-    if (firstImg.complete) {
-        loadedCount++;
-        render();
-        startLoadingRemaining();
-    } else {
-        firstImg.onload = () => {
-            loadedCount++;
-            render();
-            startLoadingRemaining();
-        };
-        firstImg.onerror = startLoadingRemaining;
+    for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        img.src = currentFrame(i);
+        images.push(img);
     }
+
+    let loadedCount = 0;
+    images.forEach((img, i) => {
+        const triggerRender = () => {
+            loadedCount++;
+            if (i === 0) render();
+            if (loadedCount === frameCount) render();
+        };
+
+        if (img.complete) {
+            triggerRender();
+        } else {
+            img.onload = triggerRender;
+        }
+    });
 
     let lastLoadedFrameIndex = 0;
     function render() {
@@ -101,10 +87,9 @@
 
         let activeImage = images[frameIndex];
         
-        // Fallback robusto: se a imagem atual não carregou, usa a última disponível
+        // Fallback para a última imagem que realmente carregou
         if (!activeImage || !activeImage.complete || activeImage.naturalWidth === 0) {
             activeImage = images[lastLoadedFrameIndex];
-            if (!activeImage || !activeImage.complete) return; 
         } else {
             lastLoadedFrameIndex = frameIndex;
         }
