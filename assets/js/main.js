@@ -79,20 +79,23 @@ function initApp() {
 
         const iW = img.naturalWidth, iH = img.naturalHeight;
         
-        // Lógica de escala centralizada (tipo "contain/cover" inteligente)
-        const r = iW / iH, cr = sw / sh;
-        let dW, dH;
-        
         if (isMobile) {
-            // No mobile damos um zoom extra de 1.2x para o óculos ficar imponente
-            dW = (cr > r ? sw : sh * r) * 1.2;
-            dH = (cr > r ? sw / r : sh) * 1.2;
+            // ROTAÇÃO MOBILE: gira 90 graus para usar o ecrã vertical (9:16)
+            context.save();
+            context.translate(sw / 2, sh / 2);
+            context.rotate(Math.PI / 2);
+            
+            // Escala para preencher a altura (que vira largura após rotação)
+            const s = Math.max(sh / iW, sw / iH) * 0.95; // 0.95 para pequena margem
+            context.drawImage(img, -(iW * s) / 2, -(iH * s) / 2, iW * s, iH * s);
+            context.restore();
         } else {
-            dW = cr > r ? sw : sh * r;
-            dH = cr > r ? sw / r : sh;
+            // DESKTOP: horizontal padrão
+            const r = iW / iH, cr = sw / sh;
+            const dW = cr > r ? sw : sh * r;
+            const dH = cr > r ? sw / r : sh;
+            context.drawImage(img, (sw - dW) / 2, (sh - dH) / 2, dW, dH);
         }
-        
-        context.drawImage(img, (sw - dW) / 2, (sh - dH) / 2, dW, dH);
     }
 
     // Frame 1 — carregado imediatamente (preloaded no <head>)
